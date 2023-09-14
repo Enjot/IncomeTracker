@@ -43,10 +43,11 @@ fun main() = application {
             // useDarkTheme = isSystemInDarkTheme()
             // app will follow system theme at launch, but it won't update theme if you change system theme
             // after changing system theme in settings, you will have to relaunch app to apply changes
-            useDarkTheme = false
+            useDarkTheme = true
         ) {
             // composable function from which interface starts rendering
             HomeScreen()
         }
     }
+
 }
