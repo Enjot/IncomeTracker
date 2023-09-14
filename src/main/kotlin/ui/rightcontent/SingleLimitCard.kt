@@ -3,7 +3,7 @@ package ui.rightcontent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,36 +16,78 @@ fun SingleLimitCard(
     actualProgress: Float,
     modifier: Modifier = Modifier
 ) {
+    var isInEdit by remember { mutableStateOf(false) }
+    var limitName by remember { mutableStateOf(item.limitName) }
+    var currentExpenses by remember { mutableStateOf(item.currentExpenses.toString()) }
+    var plannedExpenses by remember { mutableStateOf(item.plannedExpenses.toString()) }
+
     Card(
-        onClick = {},
+        onClick = {isInEdit = !isInEdit},
         shape = RoundedCornerShape(28.dp),
         elevation = 2.dp,
         modifier = modifier
             .fillMaxWidth()
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 24.dp)
         ) {
-            Column {
-                Text(item.limitName)
-                Spacer(modifier = Modifier.height(12.dp))
-                Text("${item.currentExpenses} zł")
+            Row (
+                modifier = Modifier
+                    .align(Alignment.Start)
+            ){
+                if (isInEdit){
+                    TextField(
+                        value = limitName,
+                        onValueChange = {limitName = it},
+                        singleLine = true,
+                    )
+                }else{
+                    Text(limitName)
+                }
+
+
             }
-            LinearProgressIndicator(
-                progress = actualProgress,
-                backgroundColor = Color.LightGray,
-                color = MaterialTheme.colors.primary,
+            Spacer(modifier = Modifier.height(12.dp))
+            Row (
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .height(8.dp)
-            )
-            Text(
-                text = "${item.plannedExpenses} zł",
-                modifier = Modifier
-                    .align(Alignment.Bottom)
-            )
+                    .fillMaxWidth()
+            ){
+                if (isInEdit){
+                    TextField(
+                        value = currentExpenses,
+                        onValueChange = {currentExpenses = it},
+                        singleLine = true,
+                        modifier = Modifier
+                            .width(50.dp)
+                    )
+                }else{
+                    Text(currentExpenses)
+                }
+                LinearProgressIndicator(
+                    progress = actualProgress,
+                    backgroundColor = Color.LightGray,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .height(8.dp)
+                        .align(Alignment.Bottom)
+                )
+                if (isInEdit){
+                    TextField(
+                        value = plannedExpenses,
+                        onValueChange = {plannedExpenses = it},
+                        singleLine = true,
+                        modifier = Modifier
+                            .width(62.dp)
+                    )
+                }else{
+                    Text(plannedExpenses)
+                }
+            }
+
         }
     }
 }
