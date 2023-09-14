@@ -2,18 +2,18 @@ package ui.rightcontent
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SingleLimitCard(
     item: LimitItem,
+    actualProgress: Float,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -25,6 +25,7 @@ fun SingleLimitCard(
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 24.dp)
         ) {
@@ -33,6 +34,13 @@ fun SingleLimitCard(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("${item.currentExpenses} zł")
             }
+            LinearProgressIndicator(
+                progress = actualProgress,
+                backgroundColor = Color.LightGray,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier
+                    .height(8.dp)
+            )
             Text(
                 text = "${item.plannedExpenses} zł",
                 modifier = Modifier

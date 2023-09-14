@@ -17,15 +17,22 @@ fun RightContent(
         modifier
             .padding(24.dp)
     ) {
+        IconsBar(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+        )
         /* TODO button to change theme */
         PieChart(modifier = Modifier
+            .padding(12.dp)
             .weight(2f)
             .fillMaxSize()
         )
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         LimitList(
             listOfLimitItem,
             modifier = Modifier
+                .padding(12.dp)
                 .weight(5f)
                 .fillMaxSize()
         )

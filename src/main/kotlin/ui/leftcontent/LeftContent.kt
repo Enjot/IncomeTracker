@@ -22,16 +22,7 @@ fun LeftContent(
         modifier
             .padding(24.dp)
     ) {
-        Icon(
-            painter = painterResource("drawable/picture_as_pdf_FILL1_wght400_GRAD0_opsz24.svg"),
-            contentDescription = null,
-            tint = Color.Black,
-            modifier = Modifier
-                .size(48.dp)
-                .clickable{
 
-                }
-        )
         Month()
 
         SortingButton(

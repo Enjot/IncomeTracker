@@ -10,18 +10,18 @@ val listOfLimitItem = listOf(
     LimitItem(
         "żywność",
         13,
-        1000
+        100
     ),
 
     LimitItem(
         "rozrywka",
         20,
-        300
+        100
     ),
 
     LimitItem(
         "transport",
-        30,
-        150
+        50,
+        100
     )
 )

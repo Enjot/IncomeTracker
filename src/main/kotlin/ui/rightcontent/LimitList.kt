@@ -44,6 +44,7 @@ fun LimitList(
                     list.forEach {
                         SingleLimitCard(
                             item = it,
+                            actualProgress = (it.currentExpenses.toFloat() / it.plannedExpenses.toFloat()),
                             modifier = Modifier.padding(4.dp)
                         )
                     }
