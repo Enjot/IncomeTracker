@@ -10,10 +10,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SortingButton(
+    inputValue: String,
     modifier: Modifier = Modifier
 ) {
 
-    var value by remember { mutableStateOf("Od najnowszych") }
+    var value by remember { mutableStateOf(inputValue) }
 
     OutlinedTextField(
         value = value,

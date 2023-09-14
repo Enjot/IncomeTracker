@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -32,7 +31,7 @@ fun IconsBar(
                 .size(32.dp)
                 .clickable {  }
         )
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(24.dp))
         Icon(
             imageVector = Icons.Filled.Settings,
             contentDescription = null,

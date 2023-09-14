@@ -1,7 +1,6 @@
 package ui.leftcontent
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,12 +18,25 @@ fun LeftContent(
     ) {
 
         Month()
-
-        SortingButton(
+        Row(
             modifier = Modifier
-                .padding(vertical = 12.dp)
                 .align(Alignment.End)
-        )
+        ) {
+            // TODO zrobić filtrowanie po kategoriach
+            SortingButton(
+                inputValue = "Filtruj",
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+            )
+            Spacer(modifier = Modifier.width(24.dp))
+
+            SortingButton(
+                inputValue = "Od najnowszych",
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+            )
+        }
+
 
         ListOfSpending(
             listOfSpendingItems,
