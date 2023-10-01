@@ -1,4 +1,3 @@
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -8,8 +7,6 @@ import androidx.compose.ui.window.rememberWindowState
 import com.example.compose.AppTheme
 import ui.HomeScreen
 import java.awt.Dimension
-
-// nie ma chuja ze wbijesz ten diament
 
 // global constants to set initial main window size
 const val WIDTH = 1280

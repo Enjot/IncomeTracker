@@ -1,5 +1,4 @@
 package ui.rightcontent
-
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
