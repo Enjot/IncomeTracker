@@ -3,6 +3,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
+    id("app.cash.sqldelight") version "2.0.0"
+
 }
 
 group = "com.example"
@@ -34,6 +36,10 @@ dependencies {
 
     // Transitions
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+
+    //SQLDelight
+    implementation("app.cash.sqldelight:sqlite-driver:2.0.0")
+    implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
 }
 
 compose.desktop {
@@ -47,3 +53,15 @@ compose.desktop {
         }
     }
 }
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.example")
+        }
+    }
+}
+
+
+
+

@@ -1,3 +1,4 @@
+import androidx.compose.runtime.mutableStateListOf
 
 data class SpendingItem(
     val name: String,
@@ -6,7 +7,7 @@ data class SpendingItem(
     val cost1: Float = 0F
 )
 
-val listOfSpendingItems = mutableListOf(
+val listOfSpendingItems = mutableStateListOf(
     SpendingItem(
         "Burger",
         "żywność",
