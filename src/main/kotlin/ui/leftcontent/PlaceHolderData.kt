@@ -7,7 +7,7 @@ data class SpendingItem(
     val cost1: Float = 0F
 )
 
-val listOfSpendingItems = listOf(
+val listOfSpendingItems = mutableListOf(
     SpendingItem(
         "Burger",
         "żywność",

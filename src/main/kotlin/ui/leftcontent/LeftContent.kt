@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LeftContent(
+    items: List<SpendingItem>,
     modifier: Modifier = Modifier
 ) {
 
@@ -39,7 +40,7 @@ fun LeftContent(
 
 
         ListOfSpending(
-            listOfSpendingItems,
+            items,
             modifier = Modifier
                 .padding(12.dp)
         )

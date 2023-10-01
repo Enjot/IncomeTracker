@@ -1,11 +1,16 @@
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
 import com.example.compose.AppTheme
 import ui.HomeScreen
+import ui.HomeScreenModel
 import java.awt.Dimension
 
 // global constants to set initial main window size
@@ -43,8 +48,18 @@ fun main() = application {
             useDarkTheme = true
         ) {
             // composable function from which interface starts rendering
-            HomeScreen()
+            Navigator(HomeScreen())
         }
     }
 
+}
+
+class HomeScreen : Screen {
+    @Composable
+    override fun Content() {
+
+        val screenModel = rememberScreenModel { HomeScreenModel() }
+
+        HomeScreen(screenModel)
+    }
 }
