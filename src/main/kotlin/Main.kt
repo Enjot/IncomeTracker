@@ -13,16 +13,13 @@ import ui.HomeScreen
 import ui.HomeScreenModel
 import java.awt.Dimension
 
-// global constants to set initial main window size
-const val WIDTH = 1280
-const val HEIGHT = 720
 
 fun main() = application {
 
     // state of main window size
     val state = rememberWindowState(
-        width = WIDTH.dp,
-        height = HEIGHT.dp,
+        width = WINDOW_INITIAL_WIDTH.dp,
+        height = WINDOW_INITIAL_HEIGHT.dp,
         position = WindowPosition(Alignment.Center)
     )
 

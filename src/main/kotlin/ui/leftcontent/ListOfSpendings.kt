@@ -1,5 +1,6 @@
 package ui.leftcontent
 
+import SpendingItem
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
