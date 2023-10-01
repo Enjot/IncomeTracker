@@ -8,3 +8,15 @@ fun main(){
     println(currentInstant)
 }
 
+/*
+
+
+tabela: wydatki
+id | nazwa | kwota | id kategorii | data
+
+tabela: kategorie
+id | nazwa
+
+
+ */
+
