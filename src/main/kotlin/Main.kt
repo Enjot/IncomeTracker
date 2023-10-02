@@ -6,24 +6,22 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
-import com.example.Database
 import com.example.compose.AppTheme
+import org.koin.core.context.startKoin
 import ui.HomeScreen
 import ui.HomeScreenModel
 import java.awt.Dimension
 
-
 fun main() = application {
-
-    // will be moved to Koin
-    val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    Database.Schema.create(driver)
-
+    
+    
+    startKoin {
+        modules(databaseModule, homeModule)
+    }
+    
     // state of main window size
     val state = rememberWindowState(
         width = WINDOW_INITIAL_WIDTH.dp,
@@ -63,9 +61,10 @@ class HomeScreen : Screen {
     @Composable
     override fun Content() {
 
-        val screenModel = rememberScreenModel { HomeScreenModel() }
+        val screenModel = getScreenModel<HomeScreenModel>()
 
         HomeScreen(screenModel)
+        
     }
 }
 

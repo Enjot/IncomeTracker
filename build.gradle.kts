@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
     id("app.cash.sqldelight") version "2.0.0"
+    id ("com.google.devtools.ksp") version "1.9.10-1.0.13"
 
 }
 
@@ -25,21 +26,21 @@ dependencies {
     implementation(compose.desktop.currentOs)
 
     val voyagerVersion = "1.0.0-rc07"
-    // Navigator
+    val koinVersion = "3.5.0"
+
+    // Voyager
     implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
-
-    // BottomSheetNavigator
     implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
-
-    // TabNavigator
     implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
-
-    // Transitions
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
-
-    //SQLDelight
+    implementation ("cafe.adriel.voyager:voyager-koin:$voyagerVersion")
+    
+    // SQLDelight
     implementation("app.cash.sqldelight:sqlite-driver:2.0.0")
     implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
+
+    // Koin
+    implementation ("io.insert-koin:koin-core:$koinVersion")
 }
 
 compose.desktop {
@@ -61,7 +62,3 @@ sqldelight {
         }
     }
 }
-
-
-
-
