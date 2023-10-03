@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,12 +42,22 @@ fun LimitList(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
+                    Button(
+                        onClick = { isInEditMode = !isInEditMode },
+                        shape = RoundedCornerShape(100),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                    ){
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxSize()
-                            .clickable { isInEditMode = !isInEditMode }
                     ) {
                         OutlinedTextField(
                             value = limitName,
@@ -72,10 +84,9 @@ fun LimitList(
                                 .padding(12.dp)
                         )
                     }
-                    FloatingActionButton(
-                        onClick = {
-                            isInEditMode = false
-                        },
+                    Button(
+                        onClick = { isInEditMode = !isInEditMode },
+                        shape = RoundedCornerShape(100),
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                     ) {
