@@ -1,0 +1,21 @@
+CREATE TABLE category (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
+);
+
+CREATE INDEX categoryName ON category(name);
+
+INSERT INTO category (name)
+VALUES ('Żywność');
+
+selectAll:
+SELECT *
+FROM category;
+
+insert:
+INSERT INTO category(name)
+VALUES (?);
+
+-- insertFullPlayerObject:
+-- INSERT INTO category(player_number, full_name)
+-- VALUES ?;

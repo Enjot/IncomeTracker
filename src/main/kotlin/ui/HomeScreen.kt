@@ -26,6 +26,7 @@ import ui.rightcontent.RightContent
             // inside main window we made two separated blocks to handle interface
             Row() {
                 LeftContent(
+                    onAddClick = { screenModel.insert() },
                     items = listOfSpendingItems,
                     modifier = Modifier
                         .fillMaxSize()

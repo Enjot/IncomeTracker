@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LeftContent(
+    onAddClick: () -> Unit,
     items: List<SpendingItem>,
     modifier: Modifier = Modifier
 ) {
@@ -41,6 +42,7 @@ fun LeftContent(
 
 
         ListOfSpending(
+            onAddClick = onAddClick,
             items,
             modifier = Modifier
                 .padding(12.dp)

@@ -1,5 +1,6 @@
 package ui.leftcontent
 
+import HomeScreen
 import SpendingItem
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,7 @@ import ui.rightcontent.shape
 
 @Composable
 fun ListOfSpending(
+    onAddClick: () -> Unit,
     list: List<SpendingItem>,
     modifier: Modifier = Modifier
 ) {
@@ -65,9 +67,7 @@ fun ListOfSpending(
                     .fillMaxHeight()
             )
             FloatingActionButton(
-                onClick = {
-
-                },
+                onClick = onAddClick,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
             ) {

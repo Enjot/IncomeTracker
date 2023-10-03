@@ -1,0 +1,18 @@
+CREATE TABLE spending (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    amount REAL NOT NULL,
+    date TEXT NOT NULL
+--     categoryId
+);
+
+CREATE INDEX spendingDate ON spending(date);
+
+selectAll:
+SELECT *
+FROM spending;
+
+
+insert:
+INSERT INTO spending(name, amount, date)
+VALUES (?,?,?);
