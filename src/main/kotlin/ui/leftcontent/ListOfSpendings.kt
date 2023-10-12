@@ -17,12 +17,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sqldelight.Spending
 import ui.rightcontent.shape
 
 @Composable
 fun ListOfSpending(
-    onAddClick: () -> Unit,
-    list: List<SpendingItem>,
+    onAddClick: (String, Double) -> Unit,
+    onDeleteClick: (Long) -> Unit,
+    list: List<Spending>,
     modifier: Modifier = Modifier
 ) {
     var isInEditMode by remember { mutableStateOf(false) }
@@ -42,18 +44,17 @@ fun ListOfSpending(
         Box(modifier) {
 
 
-
-            if (isInEditMode){
+            if (isInEditMode) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                ){
+                ) {
                     Button(
                         onClick = { isInEditMode = !isInEditMode },
                         shape = RoundedCornerShape(100),
                         modifier = Modifier
                             .align(Alignment.TopStart)
-                    ){
+                    ) {
                         Icon(
                             imageVector = Icons.Outlined.ArrowBack,
                             contentDescription = null
@@ -73,14 +74,14 @@ fun ListOfSpending(
                             modifier = Modifier
                                 .padding(12.dp)
                         )
-                        OutlinedTextField(
-                            value = spendingCategory,
-                            label = { Text("kategoria") },
-                            onValueChange = { spendingCategory = it },
-                            singleLine = true,
-                            modifier = Modifier
-                                .padding(12.dp)
-                        )
+//                        OutlinedTextField(
+//                            value = spendingCategory,
+//                            label = { Text("kategoria") },
+//                            onValueChange = { spendingCategory = it },
+//                            singleLine = true,
+//                            modifier = Modifier
+//                                .padding(12.dp)
+//                        )
                         OutlinedTextField(
                             value = spendingAmount,
                             label = { Text("Kwota") },
@@ -91,7 +92,12 @@ fun ListOfSpending(
                         )
                     }
                     Button(
-                        onClick = { isInEditMode = !isInEditMode },
+                        onClick = {
+                            onAddClick(spendingName, spendingAmount.toDouble())
+                            spendingName = ""
+                            spendingAmount = ""
+                            isInEditMode = !isInEditMode
+                        },
                         shape = RoundedCornerShape(100),
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -102,7 +108,7 @@ fun ListOfSpending(
                         )
                     }
                 }
-            }else{
+            } else {
 
                 val stateVertical = rememberLazyListState()
                 LazyColumn(
@@ -121,6 +127,7 @@ fun ListOfSpending(
                         list.forEach {
                             SingleSpendingCard(
                                 item = it,
+                                onClick = onDeleteClick,
                                 modifier = Modifier
                                     .padding(4.dp)
                             )

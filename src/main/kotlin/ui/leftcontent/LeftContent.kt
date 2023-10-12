@@ -6,11 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sqldelight.Spending
 
 @Composable
 fun LeftContent(
-    onAddClick: () -> Unit,
-    items: List<SpendingItem>,
+    onAddClick: (String, Double) -> Unit,
+    items: List<Spending>,
+    onDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -43,9 +45,11 @@ fun LeftContent(
 
         ListOfSpending(
             onAddClick = onAddClick,
+            onDeleteClick = onDeleteClick,
             items,
             modifier = Modifier
                 .padding(12.dp)
+                .fillMaxWidth()
         )
 
     }

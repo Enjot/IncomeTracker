@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import listOfSpendingItems
 import ui.leftcontent.LeftContent
 import ui.rightcontent.RightContent
 
@@ -18,6 +18,8 @@ import ui.rightcontent.RightContent
         modifier: Modifier = Modifier
     ) {
 
+        val spendings = screenModel.spendings.collectAsState(emptyList())
+
         // blank surface that fill whole window and change color itself depending on theme
         Surface(
             color = MaterialTheme.colors.surface,
@@ -26,8 +28,9 @@ import ui.rightcontent.RightContent
             // inside main window we made two separated blocks to handle interface
             Row() {
                 LeftContent(
-                    onAddClick = { screenModel.insert() },
-                    items = listOfSpendingItems,
+                    onAddClick = { name, amount -> screenModel.insertSpending(name, amount) },
+                    onDeleteClick = { id -> screenModel.deleteSpending(id) },
+                    items = spendings.value,
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)

@@ -16,3 +16,7 @@ FROM spending;
 insert:
 INSERT INTO spending(name, amount, date)
 VALUES (?,?,?);
+
+delete:
+DELETE FROM spending
+WHERE id = ?;

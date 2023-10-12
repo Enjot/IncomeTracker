@@ -10,15 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sqldelight.Spending
+import ui.rightcontent.shape
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SingleSpendingCard(
-    item: SpendingItem,
-    modifier: Modifier = Modifier
+    item: Spending,
+    onClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        onClick = {},
+        onClick = { onClick(item.id) },
         shape = RoundedCornerShape(28.dp),
         elevation = 2.dp,
         modifier = modifier
@@ -33,10 +36,10 @@ fun SingleSpendingCard(
             Column {
                 Text(item.name)
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(item.category)
+//                Text(item.category)
             }
             Text(
-                text = "${item.cost} zł",
+                text = "${item.amount} zł",
                 modifier = Modifier
                     .align(Alignment.Bottom)
             )
