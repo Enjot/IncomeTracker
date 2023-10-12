@@ -1,6 +1,5 @@
 package ui.leftcontent
 
-import SpendingItem
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sqldelight.Spending
-import ui.rightcontent.shape
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -36,13 +34,21 @@ fun SingleSpendingCard(
             Column {
                 Text(item.name)
                 Spacer(modifier = Modifier.height(12.dp))
-//                Text(item.category)
+                Text("id: ${item.id}")
             }
-            Text(
-                text = "${item.amount} zł",
-                modifier = Modifier
-                    .align(Alignment.Bottom)
-            )
+            Column {
+                Text(
+                    text = item.date,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "${item.amount} zł",
+                    modifier = Modifier
+                        .align(Alignment.End)
+                )
+            }
         }
     }
 }
