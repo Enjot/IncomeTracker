@@ -1,11 +1,12 @@
 package com.example.compose
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
-import androidx.compose.runtime.Composable
-
+import androidx.compose.runtime.*
+import com.jthemedetecor.OsThemeDetector
+import org.jetbrains.skiko.SystemTheme
+import org.jetbrains.skiko.currentSystemTheme
 
 private val LightColors = lightColors(
     primary = md_theme_light_primary,
@@ -36,9 +37,11 @@ private val DarkColors = darkColors(
 
 @Composable
 fun AppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+    
+    val useDarkTheme = rememberDesktopDarkTheme()
+    
     val colors = if (!useDarkTheme) {
         LightColors
     } else {
@@ -49,4 +52,27 @@ fun AppTheme(
         colors = colors,
         content = content
     )
+}
+
+@Composable
+fun rememberDesktopDarkTheme(): Boolean {
+    var darkTheme by remember {
+        mutableStateOf(currentSystemTheme == SystemTheme.DARK)
+    }
+
+    DisposableEffect(Unit) {
+        val darkThemeListener: (Boolean) -> Unit = {
+            darkTheme = it
+        }
+
+        val detector = OsThemeDetector.getDetector().apply {
+            registerListener(darkThemeListener)
+        }
+
+        onDispose {
+            detector.removeListener(darkThemeListener)
+        }
+    }
+
+    return darkTheme
 }

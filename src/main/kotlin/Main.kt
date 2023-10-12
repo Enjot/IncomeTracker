@@ -18,8 +18,9 @@ import java.awt.Dimension
 fun main() = application {
     
     
+    
     startKoin {
-        modules(databaseModule, homeModule)
+        modules(homeModule)
     }
     
     // state of main window size
@@ -37,6 +38,7 @@ fun main() = application {
         resizable = true
     ) {
 
+        
         // set minimum window size
         window.minimumSize = Dimension(1280,720)
 
@@ -48,7 +50,6 @@ fun main() = application {
             // useDarkTheme = isSystemInDarkTheme()
             // app will follow system theme at launch, but it won't update theme if you change system theme
             // after changing system theme in settings, you will have to relaunch app to apply changes
-            useDarkTheme = true
         ) {
             // composable function from which interface starts rendering
             Navigator(HomeScreen())

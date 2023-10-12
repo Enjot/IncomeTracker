@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
-
+    maven ("https://jitpack.io")
 }
 
 dependencies {
@@ -25,6 +25,8 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
 
+    implementation ("com.github.Dansoftowner:jSystemThemeDetector:3.6")
+    
     val voyagerVersion = "1.0.0-rc07"
     val koinVersion = "3.5.0"
 
@@ -48,7 +50,9 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            
+            modules("java.sql")
+            targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Deb)
             packageName = "IncomeTracker"
             packageVersion = "1.0.0"
         }
@@ -56,9 +60,17 @@ compose.desktop {
 }
 
 sqldelight {
+    
     databases {
+        linkSqlite.set(true)
         create("Database") {
             packageName.set("com.example")
+//            srcDirs.setFrom("src/main/sqldelight")
+//            srcDirs("src/main/sqldelight", "main/sqldelight")
+//            dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.0.0")
+            
+//            generateAsync.set(true)
         }
+        
     }
 }
