@@ -10,7 +10,8 @@ CREATE INDEX spendingDate ON spending(date);
 
 selectAll:
 SELECT *
-FROM spending;
+FROM spending
+ORDER BY id DESC ;
 
 
 insert:

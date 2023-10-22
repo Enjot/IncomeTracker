@@ -28,6 +28,7 @@ fun HomeScreen(
         // inside main window we made two separated blocks to handle interface
         Row() {
             LeftContent(
+                screenModel = screenModel,
                 onAddClick = { name, amount -> screenModel.insertSpending(name, amount) },
                 onDeleteClick = { id -> screenModel.deleteSpending(id) },
                 items = spendings.value,

@@ -1,5 +1,7 @@
 package ui
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.db.SqlDriver
@@ -21,7 +23,9 @@ class HomeScreenModel(
     private val database = Database(driver)
     private val categoryQueries: CategoryQueries = database.categoryQueries
     private val spendingQueries: SpendingQueries = database.spendingQueries
-
+    
+    var currentScreen: MutableState<CurrentScreen> = mutableStateOf(CurrentScreen.ListOfSpending)
+    
     lateinit var spendings: Flow<List<Spending>>
 
     fun insertSpending(name: String, amount: Double) {
@@ -41,4 +45,10 @@ class HomeScreenModel(
         getAllSpendings()
     }
 
+}
+
+sealed interface CurrentScreen {
+    data object ListOfSpending : CurrentScreen
+    data object AddEditSpending : CurrentScreen
+    data object ChooseCategory : CurrentScreen
 }

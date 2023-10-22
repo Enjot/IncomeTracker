@@ -1,15 +1,16 @@
 package ui.leftcontent
 
-import SpendingItem
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sqldelight.Spending
+import ui.HomeScreenModel
 
 @Composable
 fun LeftContent(
+    screenModel: HomeScreenModel,
     onAddClick: (String, Double) -> Unit,
     items: List<Spending>,
     onDeleteClick: (Long) -> Unit,
@@ -44,12 +45,13 @@ fun LeftContent(
 
 
         ListOfSpending(
+            screenModel = screenModel,
             onAddClick = onAddClick,
             onDeleteClick = onDeleteClick,
-            items,
+            list = items,
             modifier = Modifier
                 .padding(12.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
         )
 
     }
