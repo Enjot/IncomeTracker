@@ -1,5 +1,6 @@
 package ui.leftcontent
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sqldelight.Spending
@@ -36,7 +38,7 @@ fun ListOfSpending(
     ) {
 
         // use box to stack elements, in our case: list, scrollbar and floating action button
-        
+
         when (screenModel.currentScreen.value) {
             is CurrentScreen.ListOfSpending -> {
                 Spendings(
@@ -108,11 +110,16 @@ fun Spendings(
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight()
         )
+
+        val buttonAlignment by animateAlignmentAsState(if (list.isEmpty()) Alignment.Center else Alignment.BottomEnd)
+        
         Button(
             onClick = onAddClick,
             shape = RoundedCornerShape(100),
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(
+                    alignment = buttonAlignment
+                )
                 .padding(end = 24.dp)
         ) {
             // elements inside button
@@ -127,7 +134,18 @@ fun Spendings(
             }
 
         }
+
     }
+}
+
+@Composable
+fun animateAlignmentAsState(
+    targetAlignment: Alignment,
+): State<Alignment> {
+    val biased = targetAlignment as BiasAlignment
+    val horizontal by animateFloatAsState(biased.horizontalBias)
+    val vertical by animateFloatAsState(biased.verticalBias)
+    return derivedStateOf { BiasAlignment(horizontal, vertical) }
 }
 
 @Composable
