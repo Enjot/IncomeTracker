@@ -19,6 +19,7 @@ fun HomeScreen(
 ) {
 
     val spendings = screenModel.spendings.collectAsState(emptyList())
+    val categories = screenModel.categories.collectAsState(emptyList())
 
     // blank surface that fill whole window and change color itself depending on theme
     Surface(
@@ -29,7 +30,9 @@ fun HomeScreen(
         Row() {
             LeftContent(
                 screenModel = screenModel,
-                onAddClick = { name, amount -> screenModel.insertSpending(name, amount) },
+                onAddClick = { name, amount, category ->
+                    screenModel.insertSpending(name, amount, category)
+                },
                 onDeleteClick = { id -> screenModel.deleteSpending(id) },
                 items = spendings.value,
                 modifier = Modifier

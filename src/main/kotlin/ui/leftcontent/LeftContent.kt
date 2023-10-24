@@ -5,13 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
 import ui.HomeScreenModel
 
 @Composable
 fun LeftContent(
     screenModel: HomeScreenModel,
-    onAddClick: (String, Double) -> Unit,
+    onAddClick: (String, Double, Category) -> Unit,
     items: List<Spending>,
     onDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier

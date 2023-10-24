@@ -1,20 +1,28 @@
 CREATE TABLE category (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL
+  name TEXT NOT NULL PRIMARY KEY UNIQUE,
+  isDeleted INTEGER DEFAULT FALSE NOT NULL
 );
 
 CREATE INDEX categoryName ON category(name);
 
-INSERT INTO category (name)
-VALUES ('Żywność');
-
 selectAll:
 SELECT *
-FROM category;
+FROM category
+ORDER BY name;
+
+select:
+SELECT name
+FROM category
+WHERE category.name = ?;
 
 insert:
 INSERT INTO category(name)
-VALUES (?);
+VALUES (name = ?);
+
+delete:
+UPDATE category
+SET isDeleted = TRUE
+WHERE category.name = ?;
 
 -- insertFullPlayerObject:
 -- INSERT INTO category(player_number, full_name)

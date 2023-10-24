@@ -7,6 +7,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.db.SqlDriver
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.Database
+import com.example.sqldelight.Category
 import com.example.sqldelight.CategoryQueries
 import com.example.sqldelight.Spending
 import com.example.sqldelight.SpendingQueries
@@ -16,7 +17,7 @@ import java.time.LocalDate
 
 
 class HomeScreenModel(
-    private val driver: SqlDriver
+    driver: SqlDriver
 ) : ScreenModel {
 
 
@@ -27,9 +28,19 @@ class HomeScreenModel(
     var currentScreen: MutableState<CurrentScreen> = mutableStateOf(CurrentScreen.ListOfSpending)
     
     lateinit var spendings: Flow<List<Spending>>
+    lateinit var categories: Flow<List<Category>>
 
-    fun insertSpending(name: String, amount: Double) {
-        spendingQueries.insert(name, amount, LocalDate.now().toString())
+    fun insertSpending(
+        name: String,
+        amount: Double,
+        category: Category
+    ) {
+        spendingQueries.insert(
+            name,
+            amount,
+            LocalDate.now().toString(),
+            category.name
+        )
     }
 
     fun deleteSpending(id: Long){
@@ -41,9 +52,25 @@ class HomeScreenModel(
             .asFlow()
             .mapToList(Dispatchers.IO)
     }
+
+    private fun insertCategory(name: String){
+        categoryQueries.insert(name)
+    }
+    private fun deleteCategory(name: String){
+        categoryQueries.delete(name)
+    }
+
+    private fun getAllCategories() {
+        categories = categoryQueries.selectAll()
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+    }
+
     init {
         getAllSpendings()
+        getAllCategories()
     }
+
 
 }
 

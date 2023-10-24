@@ -2,8 +2,8 @@ CREATE TABLE spending (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     amount REAL NOT NULL,
-    date TEXT NOT NULL
---     categoryId
+    date TEXT NOT NULL,
+    category TEXT NOT NULL
 );
 
 CREATE INDEX spendingDate ON spending(date);
@@ -13,10 +13,15 @@ SELECT *
 FROM spending
 ORDER BY id DESC ;
 
+selectByCategory:
+SELECT *
+FROM spending
+WHERE category = ?
+ORDER BY id DESC;
 
 insert:
-INSERT INTO spending(name, amount, date)
-VALUES (?,?,?);
+INSERT INTO spending(name, amount, date, category)
+VALUES (?,?,?,?);
 
 delete:
 DELETE FROM spending

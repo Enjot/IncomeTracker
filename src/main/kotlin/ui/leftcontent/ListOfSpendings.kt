@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
 import ui.CurrentScreen
 import ui.HomeScreenModel
@@ -25,7 +26,7 @@ import ui.rightcontent.shape
 @Composable
 fun ListOfSpending(
     screenModel: HomeScreenModel,
-    onAddClick: (String, Double) -> Unit,
+    onAddClick: (String, Double, Category) -> Unit,
     onDeleteClick: (Long) -> Unit,
     list: List<Spending>,
     modifier: Modifier = Modifier
@@ -150,7 +151,7 @@ fun animateAlignmentAsState(
 
 @Composable
 fun AddEditSpending(
-    onAddClick: (String, Double) -> Unit,
+    onAddClick: (String, Double, Category) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
 ) {
