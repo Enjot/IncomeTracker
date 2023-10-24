@@ -25,11 +25,13 @@ class HomeScreenModel(
     private val categoryQueries: CategoryQueries = database.categoryQueries
     private val spendingQueries: SpendingQueries = database.spendingQueries
     
-    var currentScreen: MutableState<CurrentScreen> = mutableStateOf(CurrentScreen.ListOfSpending)
+    var currentScreen = mutableStateOf<CurrentScreen>(CurrentScreen.ListOfSpending)
     
     lateinit var spendings: Flow<List<Spending>>
     lateinit var categories: Flow<List<Category>>
 
+    var selectedCategory: MutableState<Category?> = mutableStateOf(null)
+    
     fun insertSpending(
         name: String,
         amount: Double,
@@ -53,9 +55,14 @@ class HomeScreenModel(
             .mapToList(Dispatchers.IO)
     }
 
-    private fun insertCategory(name: String){
-        categoryQueries.insert(name)
+    private fun insertCategory(name: String) {
+        try {
+            categoryQueries.insert(name)
+        } catch (_: Exception) {
+            // error name: org.sqlite.SQLiteException
+        }
     }
+    
     private fun deleteCategory(name: String){
         categoryQueries.delete(name)
     }
@@ -69,6 +76,10 @@ class HomeScreenModel(
     init {
         getAllSpendings()
         getAllCategories()
+        
+        insertCategory("żywność")
+        insertCategory("transport")
+        insertCategory("rachunki")
     }
 
 

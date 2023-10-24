@@ -17,7 +17,7 @@ WHERE category.name = ?;
 
 insert:
 INSERT INTO category(name)
-VALUES (name = ?);
+VALUES (?);
 
 delete:
 UPDATE category

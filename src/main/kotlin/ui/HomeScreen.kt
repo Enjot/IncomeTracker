@@ -7,6 +7,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import com.example.sqldelight.Category
 import ui.leftcontent.LeftContent
 import ui.rightcontent.RightContent
 
@@ -14,8 +15,7 @@ import ui.rightcontent.RightContent
 
 @Composable
 fun HomeScreen(
-    screenModel: HomeScreenModel,
-    modifier: Modifier = Modifier
+    screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
 
     val spendings = screenModel.spendings.collectAsState(emptyList())
@@ -23,8 +23,7 @@ fun HomeScreen(
 
     // blank surface that fill whole window and change color itself depending on theme
     Surface(
-        color = MaterialTheme.colors.surface,
-        modifier = modifier
+        color = MaterialTheme.colors.surface, modifier = modifier
     ) {
         // inside main window we made two separated blocks to handle interface
         Row() {
@@ -34,15 +33,18 @@ fun HomeScreen(
                     screenModel.insertSpending(name, amount, category)
                 },
                 onDeleteClick = { id -> screenModel.deleteSpending(id) },
-                items = spendings.value,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
+                spendings = spendings.value,
+                categories = categories.value,
+                onChooseCategoryButtonClick = { screenModel.currentScreen.value = CurrentScreen.ChooseCategory },
+                selectedCategory = screenModel.selectedCategory.value,
+                onSelectCategory = { name ->
+                    screenModel.selectedCategory.value = Category(name, 0)
+                    screenModel.currentScreen.value = CurrentScreen.AddEditSpending
+                },
+                modifier = Modifier.fillMaxSize().weight(1f)
             )
             RightContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
+                modifier = Modifier.fillMaxSize().weight(1f)
             )
         }
     }

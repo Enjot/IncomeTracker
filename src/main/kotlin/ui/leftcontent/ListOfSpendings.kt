@@ -2,8 +2,12 @@ package ui.leftcontent
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,9 +32,14 @@ fun ListOfSpending(
     screenModel: HomeScreenModel,
     onAddClick: (String, Double, Category) -> Unit,
     onDeleteClick: (Long) -> Unit,
-    list: List<Spending>,
+    selectedCategory: Category?,
+    onChooseCategoryButtonClick: () -> Unit,
+    onSelectCategory: (String) -> Unit,
+    spendings: List<Spending>,
+    categories: List<Category>,
     modifier: Modifier = Modifier
 ) {
+    
     Card(
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 4.dp,
@@ -44,7 +53,7 @@ fun ListOfSpending(
             is CurrentScreen.ListOfSpending -> {
                 Spendings(
                     onAddClick = { screenModel.currentScreen.value = CurrentScreen.AddEditSpending },
-                    list = list,
+                    list = spendings,
                     onDeleteClick = onDeleteClick,
                     modifier = modifier
                 )
@@ -54,12 +63,17 @@ fun ListOfSpending(
                 AddEditSpending(
                     onBackClick = { screenModel.currentScreen.value = CurrentScreen.ListOfSpending },
                     onAddClick = onAddClick,
+                    onChooseCategoryButtonClick = onChooseCategoryButtonClick,
+                    selectedCategory = selectedCategory,
                     modifier = modifier
                 )
             }
 
             is CurrentScreen.ChooseCategory -> {
-                Categories()
+                Categories(
+                    categories,
+                    onSelectCategory,
+                )
             }
 
         }
@@ -113,7 +127,7 @@ fun Spendings(
         )
 
         val buttonAlignment by animateAlignmentAsState(if (list.isEmpty()) Alignment.Center else Alignment.BottomEnd)
-        
+
         Button(
             onClick = onAddClick,
             shape = RoundedCornerShape(100),
@@ -153,11 +167,12 @@ fun animateAlignmentAsState(
 fun AddEditSpending(
     onAddClick: (String, Double, Category) -> Unit,
     onBackClick: () -> Unit,
+    onChooseCategoryButtonClick: () -> Unit,
+    selectedCategory: Category?,
     modifier: Modifier
 ) {
 
     var spendingName by remember { mutableStateOf("") }
-    var spendingCategory by remember { mutableStateOf("") }
     var spendingAmount by remember { mutableStateOf("") }
 
     Box(
@@ -189,12 +204,18 @@ fun AddEditSpending(
                     .padding(12.dp)
             )
             OutlinedTextField(
-                value = spendingCategory,
-                label = { Text("kategoria") },
-                onValueChange = { spendingCategory = it },
+                value = selectedCategory?.name ?: "Wybierz kategorię",
+                enabled = false,
+                label = {
+                    Text("Kategoria")
+                },
+                onValueChange = { },
                 singleLine = true,
                 modifier = Modifier
                     .padding(12.dp)
+                    .clickable { 
+                        run(onChooseCategoryButtonClick)
+                    }
             )
             OutlinedTextField(
                 value = spendingAmount,
@@ -203,11 +224,16 @@ fun AddEditSpending(
                 singleLine = true,
                 modifier = Modifier
                     .padding(12.dp)
+                    .clickable { 
+                        
+                    }
             )
         }
+        
         Button(
             onClick = {
-                onAddClick(spendingName, spendingAmount.toDouble())
+                if (selectedCategory == null) return@Button
+                onAddClick(spendingName, spendingAmount.toDouble(), selectedCategory!!)
                 run(onBackClick)
             },
             shape = RoundedCornerShape(100),
@@ -223,8 +249,25 @@ fun AddEditSpending(
 }
 
 @Composable
-fun Categories() {
-
+fun Categories(
+    categories: List<Category>,
+    onClick: (String) -> Unit,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(100.dp),
+        modifier = Modifier
+            .padding(12.dp)
+        ) {
+        items(categories) {
+            Text(
+                text = it.name,
+                maxLines = 1,
+                modifier = Modifier
+                    .clickable { run { onClick(it.name) } }
+                    .padding(4.dp)
+            )
+        }
+    }
 }
 
 

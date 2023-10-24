@@ -32,7 +32,7 @@ fun SingleSpendingCard(
                 .padding(vertical = 12.dp, horizontal = 24.dp)
         ) {
             Column {
-                Text(item.name)
+                Text("${item.name} ${item.category}")
                 Spacer(modifier = Modifier.height(12.dp))
                 Text("id: ${item.id}")
             }

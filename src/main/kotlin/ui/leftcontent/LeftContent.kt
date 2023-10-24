@@ -13,7 +13,11 @@ import ui.HomeScreenModel
 fun LeftContent(
     screenModel: HomeScreenModel,
     onAddClick: (String, Double, Category) -> Unit,
-    items: List<Spending>,
+    onSelectCategory: (String) -> Unit,
+    selectedCategory: Category?,
+    onChooseCategoryButtonClick: () -> Unit,
+    spendings: List<Spending>,
+    categories: List<Category>,
     onDeleteClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -44,13 +48,16 @@ fun LeftContent(
             )
         }
 
-
         ListOfSpending(
-            screenModel = screenModel,
-            onAddClick = onAddClick,
-            onDeleteClick = onDeleteClick,
-            list = items,
-            modifier = Modifier
+            screenModel,
+            onAddClick,
+            onDeleteClick,
+            selectedCategory,
+            onChooseCategoryButtonClick,
+            onSelectCategory,
+            spendings,
+            categories,
+            Modifier
                 .padding(12.dp)
                 .fillMaxSize()
         )
