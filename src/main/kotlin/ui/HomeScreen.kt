@@ -20,7 +20,8 @@ fun HomeScreen(
 
     val spendings = screenModel.spendings.collectAsState(emptyList())
     val categories = screenModel.categories.collectAsState(emptyList())
-
+    val categoriesTesting = screenModel.categorySpendingFlow.collectAsState(emptyMap<String, Pair<Int, Double>>())
+    
     // blank surface that fill whole window and change color itself depending on theme
     Surface(
         color = MaterialTheme.colors.surface, modifier = modifier

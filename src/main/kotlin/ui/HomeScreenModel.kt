@@ -13,7 +13,9 @@ import com.example.sqldelight.Spending
 import com.example.sqldelight.SpendingQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
+import java.util.*
 
 
 class HomeScreenModel(
@@ -24,14 +26,40 @@ class HomeScreenModel(
     private val database = Database(driver)
     private val categoryQueries: CategoryQueries = database.categoryQueries
     private val spendingQueries: SpendingQueries = database.spendingQueries
-    
-    var currentScreen = mutableStateOf<CurrentScreen>(CurrentScreen.ListOfSpending)
-    
-    lateinit var spendings: Flow<List<Spending>>
-    lateinit var categories: Flow<List<Category>>
 
-    var selectedCategory: MutableState<Category?> = mutableStateOf(null)
+    var currentScreen = mutableStateOf<CurrentScreen>(CurrentScreen.ListOfSpending)
+
+    var spendings: Flow<List<Spending>> = spendingQueries.selectAll()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
+
+    var categories: Flow<List<Category>> = categoryQueries.selectAll()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
+
+    var categorySpendingFlow: Flow<SortedMap<String, Pair<Int, Double>>> =
+        spendings.combine(categories) { spending, category ->
+
+            val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
+
+            spending.forEach {
+                if (!mapOfCategories.containsKey(it.category)) {
+                    mapOfCategories[it.category] = Pair(1, it.amount)
+                } else {
+                    mapOfCategories[it.category] = Pair(
+                        mapOfCategories.getValue(it.category).first + 1,
+                        mapOfCategories.getValue(it.category).second + it.amount
+                    )
+                }
+            }
+            category.forEach {
+                if (!mapOfCategories.containsKey(it.name)) mapOfCategories[it.name] = Pair(0, 0.00)
+            }
+            return@combine mapOfCategories.toSortedMap()
+        }
     
+    var selectedCategory: MutableState<Category?> = mutableStateOf(null)
+
     fun insertSpending(
         name: String,
         amount: Double,
@@ -45,14 +73,8 @@ class HomeScreenModel(
         )
     }
 
-    fun deleteSpending(id: Long){
+    fun deleteSpending(id: Long) {
         spendingQueries.delete(id)
-    }
-    
-    private fun getAllSpendings() {
-        spendings = spendingQueries.selectAll()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
     }
 
     private fun insertCategory(name: String) {
@@ -62,27 +84,17 @@ class HomeScreenModel(
             // error name: org.sqlite.SQLiteException
         }
     }
-    
-    private fun deleteCategory(name: String){
+
+    private fun deleteCategory(name: String) {
         categoryQueries.delete(name)
     }
 
-    private fun getAllCategories() {
-        categories = categoryQueries.selectAll()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
-    }
-
     init {
-        getAllSpendings()
-        getAllCategories()
-        
+
         insertCategory("żywność")
         insertCategory("transport")
         insertCategory("rachunki")
     }
-
-
 }
 
 sealed interface CurrentScreen {

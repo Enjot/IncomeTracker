@@ -1,0 +1,6 @@
+CREATE TABLE categoryLimit (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL,
+    date TEXT NOT NULL,
+    limitAmount REAL NOT NULL
+);
