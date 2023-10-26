@@ -79,7 +79,6 @@ fun CategoryScreen(
                 ) {
 
                     val focusRequester = remember { FocusRequester() }
-                    remember { mutableStateOf(false) }
                     
                     var name by remember { mutableStateOf("") }
 
