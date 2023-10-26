@@ -95,9 +95,31 @@ class HomeScreenModel(
 
     init {
 
-        insertCategory("żywność")
-        insertCategory("transport")
-        insertCategory("rachunki")
+        insertCategory("Produkty spożywcze")
+        insertCategory("Transport")
+        insertCategory("Rachunki")
+        insertCategory("Elektronika")
+        insertCategory("Kursy")
+        insertCategory("Leki")
+        insertCategory("Moda")
+        insertCategory("Subskrybcje")
+        insertCategory("Uroda")
+        insertCategory("Karma")
+        insertCategory("Dom i ogród")
+        insertCategory("Utrzymanie auta")
+        insertCategory("Alkohol")
+        insertCategory("Papierosy")
+        insertCategory("Gry komputerowe")
+        insertCategory("Remonty")
+        insertCategory("Mieszkanie")
+        insertCategory("Części do komputera")
+        insertCategory("Akcje giełdowe")
+        insertCategory("Czesne")
+        insertCategory("Chemia")
+        insertCategory("Remonty")
+        insertCategory("Mieszkanie")
+        
+        
     }
 }
 

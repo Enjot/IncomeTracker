@@ -17,9 +17,9 @@ fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
 
-    val spendings = screenModel.allSpendings.collectAsState(emptyList())
-    val categories = screenModel.allCategories.collectAsState(emptyList())
-    val categoriesTesting = screenModel.categories.collectAsState(emptyMap<String, Pair<Int, Double>>())
+    val allSpendings = screenModel.allSpendings.collectAsState(emptyList())
+    val allCategories = screenModel.allCategories.collectAsState(emptyList())
+    val categories = screenModel.categories.collectAsState(emptyMap<String, Pair<Int, Double>>())
     
     // blank surface that fill whole window and change color itself depending on theme
     Surface(
@@ -33,7 +33,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .width(100.dp)
+                    .width(120.dp)
                     .fillMaxHeight()
                     .background(MaterialTheme.colorScheme.surface)
             ) {
@@ -67,7 +67,9 @@ fun HomeScreen(
                     SpendingScreen()
                 }
                 Destination.CATEGORIES -> {
-                    CategoryScreen()
+                    CategoryScreen(
+                        categories = categories.value
+                    )
                 }
                 Destination.LIMITS -> {
                     LimitScreen()
