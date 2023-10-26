@@ -39,7 +39,7 @@ fun SpendingScreen(
                         style = MaterialTheme.typography.displayLarge,
                     )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(48.dp))
                 LazyVerticalGrid(
                     columns = GridCells.FixedSize(300.dp),
                     state = stateVertical

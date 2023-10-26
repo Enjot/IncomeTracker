@@ -36,7 +36,7 @@ fun CategoryScreen(
                     text = "Zarządzaj kategoriami",
                     style = MaterialTheme.typography.displayLarge,
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(48.dp))
                 LazyVerticalGrid(
                     columns = GridCells.FixedSize(250.dp),
                     state = stateVertical
