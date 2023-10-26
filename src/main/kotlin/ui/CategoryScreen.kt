@@ -1,6 +1,7 @@
 package ui
 
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -8,25 +9,26 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
-    categories: Map<String, Pair<Int, Double>>
+    onAddClick: (String) -> Unit,
+    categories: List<MutableMap.MutableEntry<String, Pair<Int, Double>>>
 ) {
-    val categoriesList by remember { mutableStateOf(categories.entries.toList()) }
     val stateVertical = rememberLazyGridState()
-    
+    var dialog by remember { mutableStateOf(false) }
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -41,7 +43,7 @@ fun CategoryScreen(
                     columns = GridCells.FixedSize(250.dp),
                     state = stateVertical
                 ) {
-                    items(categoriesList) {
+                    items(categories) {
                         CategoryItem(
                             it.key,
                             it.value.first,
@@ -58,7 +60,7 @@ fun CategoryScreen(
                         contentDescription = null
                     )
                 },
-                onClick = {},
+                onClick = { dialog = true },
                 expanded = !stateVertical.canScrollBackward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -70,8 +72,51 @@ fun CategoryScreen(
                     .align(Alignment.CenterEnd)
                     .wrapContentHeight()
             )
-        }
 
+            if (dialog) {
+                AlertDialog(
+                    onDismissRequest = { dialog = false },
+                    modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp).clip(RoundedCornerShape(24.dp))
+                ) {
+
+                    var name by remember { mutableStateOf("") }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(48.dp)
+
+                    ) {
+                        Text(
+                            text = "Dodaj kategorię",
+                            style = MaterialTheme.typography.displaySmall
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        OutlinedTextField(
+                            value = name,
+                            label = { Text("Nazwa") },
+                            onValueChange = { name = it },
+                            modifier = Modifier
+                                .padding(12.dp)
+                        )
+                        Spacer(modifier = Modifier.height(36.dp))
+                        Button(
+                            onClick = {
+                                onAddClick(name)
+                                dialog = false
+                            },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text("Dodaj")
+                        }
+                    }
+
+                }
+            }
+
+        }
     }
 }
 

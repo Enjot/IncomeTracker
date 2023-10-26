@@ -17,7 +17,7 @@ fun HomeScreen(
 ) {
     val allSpendings = screenModel.allSpendings.collectAsState(emptyList())
     val allCategories = screenModel.allCategories.collectAsState(emptyList())
-    val categories = screenModel.categories.collectAsState(emptyMap<String, Pair<Int, Double>>())
+    val categories = screenModel.categories.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
 
     Surface(
@@ -83,6 +83,7 @@ fun HomeScreen(
 
                 Destination.CATEGORIES -> {
                     CategoryScreen(
+                        onAddClick = { name -> screenModel.insertCategory(name) },
                         categories = categories.value
                     )
                 }

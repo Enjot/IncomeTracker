@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
-import java.util.*
 
 
 class HomeScreenModel(
@@ -35,7 +34,7 @@ class HomeScreenModel(
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    var categories: Flow<SortedMap<String, Pair<Int, Double>>> =
+    var categories: Flow<List<MutableMap.MutableEntry<String, Pair<Int, Double>>>> =
         allSpendings.combine(allCategories) { spending, category ->
 
             val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
@@ -50,13 +49,13 @@ class HomeScreenModel(
                     )
                 }
             }
-            
+
             category.forEach {
                 if (!mapOfCategories.containsKey(it.name) && it.isDeleted.toInt() == 0)
                     mapOfCategories[it.name] = Pair(0, 0.00)
             }
-            
-            return@combine mapOfCategories.toSortedMap()
+            return@combine mapOfCategories.entries.toList<MutableMap.MutableEntry<String, Pair<Int, Double>>>()
+                .sortedBy<MutableMap.MutableEntry<String, Pair<Int, Double>>, String> { it.key.uppercase() }
         }
     
     fun insertSpending(
@@ -76,7 +75,7 @@ class HomeScreenModel(
         spendingQueries.delete(id)
     }
 
-    private fun insertCategory(name: String) {
+    fun insertCategory(name: String) {
         try {
             categoryQueries.insert(name)
         } catch (_: Exception) {
