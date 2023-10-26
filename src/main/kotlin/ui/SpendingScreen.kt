@@ -35,7 +35,7 @@ fun SpendingScreen(
             Column {
                 Row {
                     Text(
-                        text = "Zarządzaj Wydatkami",
+                        text = "Zarządzaj wydatkami",
                         style = MaterialTheme.typography.displayLarge,
                     )
                 }
