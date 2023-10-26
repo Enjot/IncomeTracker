@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -21,8 +20,7 @@ import java.util.*
 class HomeScreenModel(
     driver: SqlDriver
 ) : ScreenModel {
-
-
+    
     private val database = Database(driver)
     private val categoryQueries: CategoryQueries = database.categoryQueries
     private val spendingQueries: SpendingQueries = database.spendingQueries
@@ -62,8 +60,6 @@ class HomeScreenModel(
             return@combine mapOfCategories.toSortedMap()
         }
     
-    var selectedCategory: MutableState<Category?> = mutableStateOf(null)
-
     fun insertSpending(
         name: String,
         amount: Double,
@@ -94,7 +90,6 @@ class HomeScreenModel(
     }
 
     init {
-
         insertCategory("Produkty spożywcze")
         insertCategory("Transport")
         insertCategory("Rachunki")
@@ -118,7 +113,6 @@ class HomeScreenModel(
         insertCategory("Chemia")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
-
     }
 }
 

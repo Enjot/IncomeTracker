@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,9 +24,7 @@ import androidx.compose.ui.unit.dp
 fun CategoryScreen(
     categories: Map<String, Pair<Int, Double>>
 ) {
-
     val categoriesList by remember { mutableStateOf(categories.entries.toList()) }
-
     val stateVertical = rememberLazyGridState()
     
     Surface(
@@ -53,17 +50,20 @@ fun CategoryScreen(
                     }
                 }
             }
-            FloatingActionButton(
+            ExtendedFloatingActionButton(
+                text = { Text("Dodaj kategorię") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null
+                    )
+                },
                 onClick = {},
+                expanded = !stateVertical.canScrollBackward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null
-                )
-            }
+            )
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(stateVertical),
                 modifier = Modifier
@@ -112,15 +112,4 @@ fun CategoryItem(
                 .padding(4.dp)
         )
     }
-}
-
-@Preview
-@Composable
-fun CategoryItemPreview() {
-    CategoryItem(
-        "Transport",
-        17,
-        380.0,
-
-        )
 }

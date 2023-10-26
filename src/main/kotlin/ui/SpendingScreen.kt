@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,14 +10,12 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.sqldelight.Spending
 
@@ -28,7 +25,6 @@ fun SpendingScreen(
     onAddClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-
     val stateVertical = rememberLazyGridState()
 
     Surface(
@@ -53,17 +49,21 @@ fun SpendingScreen(
                     }
                 }
             }
-            FloatingActionButton(
+            ExtendedFloatingActionButton(
+                text = { Text("Dodaj wydatek") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null
+                    )
+                },
                 onClick = {},
+                expanded = !stateVertical.canScrollBackward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
-            ) {
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null
-                )
-            }
+            )
+
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(stateVertical),
                 modifier = Modifier
@@ -71,10 +71,11 @@ fun SpendingScreen(
                     .wrapContentHeight()
             )
         }
+
+
     }
 
 }
-
 
 @Composable
 fun SingleSpendingItem(
@@ -83,13 +84,13 @@ fun SingleSpendingItem(
     Row(
         modifier = Modifier
             .width(300.dp)
-            .height(70.dp)
-            .padding(end = 36.dp)
+            .height(80.dp)
+            .padding(end = 48.dp)
             .clickable { }
     ) {
         Column(
             modifier = Modifier
-                .weight(1f)
+                .weight(2f)
                 .padding(4.dp)
         ) {
             Text(
@@ -97,10 +98,12 @@ fun SingleSpendingItem(
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = item.category,
                 fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.labelMedium
             )
@@ -118,10 +121,10 @@ fun SingleSpendingItem(
                 modifier = Modifier
                     .align(Alignment.End)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "%.2f zł".format(item.amount),
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
                     .align(Alignment.End)

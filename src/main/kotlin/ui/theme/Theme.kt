@@ -4,7 +4,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
-import com.example.compose.*
 import com.jthemedetecor.OsThemeDetector
 import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
@@ -78,7 +77,6 @@ private val DarkColors = darkColorScheme(
 fun AppTheme(
     content: @Composable() () -> Unit
 ) {
-    
     val useDarkTheme = rememberDesktopDarkTheme()
     
     val colorScheme = if (!useDarkTheme) {

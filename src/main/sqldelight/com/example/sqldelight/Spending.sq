@@ -11,7 +11,7 @@ CREATE INDEX spendingDate ON spending(date);
 selectAll:
 SELECT *
 FROM spending
-ORDER BY id DESC ;
+ORDER BY id DESC;
 
 selectByCategory:
 SELECT *

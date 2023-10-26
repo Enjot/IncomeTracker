@@ -25,7 +25,6 @@ import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
 import ui.CurrentScreen
 import ui.HomeScreenModel
-import ui.rightcontent.shape
 
 @Composable
 fun ListOfSpending(
@@ -43,7 +42,6 @@ fun ListOfSpending(
     Card(
         backgroundColor = MaterialTheme.colors.surface,
         elevation = 4.dp,
-        shape = shape,
         modifier = modifier
     ) {
 
