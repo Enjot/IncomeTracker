@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 // root composable function
@@ -41,7 +42,7 @@ fun HomeScreen(
                     selected = currentDestination == Destination.SPENDINGS,
                     onClick = { currentDestination = Destination.SPENDINGS },
                     label = { Text("Wydatki")},
-                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    icon = { Icon(painterResource("drawable/spendingsScreenIcon_24px.svg"), contentDescription = null) },
                     modifier = Modifier
                         .padding(vertical = 12.dp)
                 )
@@ -49,7 +50,7 @@ fun HomeScreen(
                     selected = currentDestination == Destination.CATEGORIES,
                     onClick = { currentDestination = Destination.CATEGORIES },
                     label = { Text("Kategorie")},
-                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    icon = { Icon(painterResource("drawable/categoryScreenIcon_24px.svg"), contentDescription = null) },
                     modifier = Modifier
                         .padding(vertical = 12.dp)
                 )
@@ -57,14 +58,18 @@ fun HomeScreen(
                     selected = currentDestination == Destination.LIMITS,
                     onClick = { currentDestination = Destination.LIMITS },
                     label = { Text("Limity")},
-                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    icon = { Icon(painterResource("drawable/limitScreenIcon_24px.svg"), contentDescription = null) },
                     modifier = Modifier
                         .padding(vertical = 12.dp)
                 )
             }
             when (currentDestination) {
                 Destination.SPENDINGS -> {
-                    SpendingScreen()
+                    SpendingScreen(
+                        spendings = allSpendings.value,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                 }
                 Destination.CATEGORIES -> {
                     CategoryScreen(

@@ -118,8 +118,7 @@ class HomeScreenModel(
         insertCategory("Chemia")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
-        
-        
+
     }
 }
 
