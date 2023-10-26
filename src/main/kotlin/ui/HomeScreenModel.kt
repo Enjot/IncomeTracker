@@ -56,7 +56,6 @@ class HomeScreenModel(
                     mapOfCategories[it.name] = Pair(0, 0.00)
             }
             
-            
             return@combine mapOfCategories.toSortedMap()
         }
     
