@@ -111,6 +111,8 @@ class HomeScreenModel(
         insertCategory("Chemia")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
+        
+        insertSpending("Pościel", 130.0, Category("Dom i ogród", 0))
     }
 }
 

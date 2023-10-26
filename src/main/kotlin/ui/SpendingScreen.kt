@@ -21,6 +21,7 @@ import com.example.sqldelight.Spending
 
 @Composable
 fun SpendingScreen(
+    onItemClick: (Long) -> Unit,
     spendings: List<Spending>,
     onAddClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -45,7 +46,10 @@ fun SpendingScreen(
                     state = stateVertical
                 ) {
                     items(spendings) {
-                        SingleSpendingItem(it)
+                        SingleSpendingItem(
+                            onItemClick,
+                            it
+                        )
                     }
                 }
             }
@@ -79,6 +83,7 @@ fun SpendingScreen(
 
 @Composable
 fun SingleSpendingItem(
+    onItemClick: (Long) -> Unit,
     item: Spending
 ) {
     Row(
@@ -86,7 +91,7 @@ fun SingleSpendingItem(
             .width(300.dp)
             .height(80.dp)
             .padding(end = 48.dp)
-            .clickable { }
+            .clickable { onItemClick(item.id) }
     ) {
         Column(
             modifier = Modifier

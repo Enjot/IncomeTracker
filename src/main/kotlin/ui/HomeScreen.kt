@@ -75,6 +75,7 @@ fun HomeScreen(
             when (currentDestination) {
                 Destination.SPENDINGS -> {
                     SpendingScreen(
+                        onItemClick = { id -> screenModel.deleteSpending(id) },
                         spendings = allSpendings.value,
                         modifier = Modifier
                             .fillMaxSize()

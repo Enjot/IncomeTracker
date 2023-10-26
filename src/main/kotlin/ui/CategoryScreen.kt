@@ -1,14 +1,11 @@
 package ui
 
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -45,9 +44,9 @@ fun CategoryScreen(
                 ) {
                     items(categories) {
                         CategoryItem(
-                            it.key,
-                            it.value.first,
-                            it.value.second
+                            name = it.key,
+                            spendingAmount = it.value.first,
+                            spendingSum = it.value.second
                         )
                     }
                 }
@@ -79,6 +78,9 @@ fun CategoryScreen(
                     modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp).clip(RoundedCornerShape(24.dp))
                 ) {
 
+                    val focusRequester = remember { FocusRequester() }
+                    remember { mutableStateOf(false) }
+                    
                     var name by remember { mutableStateOf("") }
 
                     Column(
@@ -100,6 +102,8 @@ fun CategoryScreen(
                             onValueChange = { name = it },
                             modifier = Modifier
                                 .padding(12.dp)
+                                .focusable()
+                                .focusRequester(focusRequester)
                         )
                         Spacer(modifier = Modifier.height(36.dp))
                         Button(
@@ -112,7 +116,10 @@ fun CategoryScreen(
                             Text("Dodaj")
                         }
                     }
-
+                    
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
                 }
             }
 
