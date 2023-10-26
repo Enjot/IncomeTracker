@@ -1,8 +1,9 @@
 package ui.leftcontent
 
 import androidx.compose.foundation.clickable
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -14,8 +15,8 @@ fun Month(
 ) {
     Text(
         text = "Wrzesień",
-        style = MaterialTheme.typography.h1,
-        color = MaterialTheme.colors.primary,
+        style = MaterialTheme.typography.displayMedium,
+        color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Light,
         modifier = Modifier
             .clickable {
@@ -24,6 +25,6 @@ fun Month(
     )
     Text(
         text = "kliknij aby zmienić miesiąc",
-        style = MaterialTheme.typography.subtitle2
+        style = MaterialTheme.typography.displayMedium
     )
 }

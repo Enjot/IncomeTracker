@@ -1,6 +1,8 @@
 package ui.leftcontent
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +29,11 @@ fun LeftContent(
         modifier
             .padding(24.dp)
     ) {
-
+        Button(
+            onClick = {}
+        ) {
+            Text("Button 1")
+        }
         Month()
         Row(
             modifier = Modifier

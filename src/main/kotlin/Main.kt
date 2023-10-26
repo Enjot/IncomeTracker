@@ -9,10 +9,10 @@ import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
-import com.example.compose.AppTheme
 import org.koin.core.context.startKoin
 import ui.HomeScreen
 import ui.HomeScreenModel
+import ui.theme.AppTheme
 import java.awt.Dimension
 
 fun main() = application {

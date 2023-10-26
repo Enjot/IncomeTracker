@@ -1,14 +1,15 @@
-package com.example.compose
+package ui.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
+import com.example.compose.*
 import com.jthemedetecor.OsThemeDetector
 import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
 
-private val LightColors = lightColors(
+private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     secondary = md_theme_light_secondary,
@@ -21,8 +22,7 @@ private val LightColors = lightColors(
     onSurface = md_theme_light_onSurface,
 )
 
-
-private val DarkColors = darkColors(
+private val DarkColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     secondary = md_theme_dark_secondary,
@@ -42,14 +42,14 @@ fun AppTheme(
     
     val useDarkTheme = rememberDesktopDarkTheme()
     
-    val colors = if (!useDarkTheme) {
+    val colorScheme = if (!useDarkTheme) {
         LightColors
     } else {
         DarkColors
     }
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colorScheme,
         content = content
     )
 }

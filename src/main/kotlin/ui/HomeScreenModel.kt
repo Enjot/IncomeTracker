@@ -29,16 +29,16 @@ class HomeScreenModel(
 
     var currentScreen = mutableStateOf<CurrentScreen>(CurrentScreen.ListOfSpending)
 
-    var spendings: Flow<List<Spending>> = spendingQueries.selectAll()
+    var allSpendings: Flow<List<Spending>> = spendingQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    var categories: Flow<List<Category>> = categoryQueries.selectAll()
+    var allCategories: Flow<List<Category>> = categoryQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    var categorySpendingFlow: Flow<SortedMap<String, Pair<Int, Double>>> =
-        spendings.combine(categories) { spending, category ->
+    var categories: Flow<SortedMap<String, Pair<Int, Double>>> =
+        allSpendings.combine(allCategories) { spending, category ->
 
             val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
 
@@ -52,9 +52,13 @@ class HomeScreenModel(
                     )
                 }
             }
+            
             category.forEach {
-                if (!mapOfCategories.containsKey(it.name)) mapOfCategories[it.name] = Pair(0, 0.00)
+                if (!mapOfCategories.containsKey(it.name) && it.isDeleted.toInt() == 0)
+                    mapOfCategories[it.name] = Pair(0, 0.00)
             }
+            
+            
             return@combine mapOfCategories.toSortedMap()
         }
     

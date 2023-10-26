@@ -1,15 +1,14 @@
 package ui
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.sqldelight.Category
-import ui.leftcontent.LeftContent
-import ui.rightcontent.RightContent
+import androidx.compose.ui.unit.dp
 
 // root composable function
 
@@ -18,35 +17,66 @@ fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
 
-    val spendings = screenModel.spendings.collectAsState(emptyList())
-    val categories = screenModel.categories.collectAsState(emptyList())
-    val categoriesTesting = screenModel.categorySpendingFlow.collectAsState(emptyMap<String, Pair<Int, Double>>())
+    val spendings = screenModel.allSpendings.collectAsState(emptyList())
+    val categories = screenModel.allCategories.collectAsState(emptyList())
+    val categoriesTesting = screenModel.categories.collectAsState(emptyMap<String, Pair<Int, Double>>())
     
     // blank surface that fill whole window and change color itself depending on theme
     Surface(
-        color = MaterialTheme.colors.surface, modifier = modifier
+        color = MaterialTheme.colorScheme.surface, modifier = modifier
     ) {
-        // inside main window we made two separated blocks to handle interface
+        
+        var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
+        
         Row() {
-            LeftContent(
-                screenModel = screenModel,
-                onAddClick = { name, amount, category ->
-                    screenModel.insertSpending(name, amount, category)
-                },
-                onDeleteClick = { id -> screenModel.deleteSpending(id) },
-                spendings = spendings.value,
-                categories = categories.value,
-                onChooseCategoryButtonClick = { screenModel.currentScreen.value = CurrentScreen.ChooseCategory },
-                selectedCategory = screenModel.selectedCategory.value,
-                onSelectCategory = { name ->
-                    screenModel.selectedCategory.value = Category(name, 0)
-                    screenModel.currentScreen.value = CurrentScreen.AddEditSpending
-                },
-                modifier = Modifier.fillMaxSize().weight(1f)
-            )
-            RightContent(
-                modifier = Modifier.fillMaxSize().weight(1f)
-            )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(100.dp)
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                NavigationRailItem(
+                    selected = currentDestination == Destination.SPENDINGS,
+                    onClick = { currentDestination = Destination.SPENDINGS },
+                    label = { Text("Wydatki")},
+                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+                NavigationRailItem(
+                    selected = currentDestination == Destination.CATEGORIES,
+                    onClick = { currentDestination = Destination.CATEGORIES },
+                    label = { Text("Kategorie")},
+                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+                NavigationRailItem(
+                    selected = currentDestination == Destination.LIMITS,
+                    onClick = { currentDestination = Destination.LIMITS },
+                    label = { Text("Limity")},
+                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+            }
+            when (currentDestination) {
+                Destination.SPENDINGS -> {
+                    SpendingScreen()
+                }
+                Destination.CATEGORIES -> {
+                    CategoryScreen()
+                }
+                Destination.LIMITS -> {
+                    LimitScreen()
+                }
+            }
         }
     }
+}
+
+enum class Destination {
+    SPENDINGS, CATEGORIES, LIMITS
 }
