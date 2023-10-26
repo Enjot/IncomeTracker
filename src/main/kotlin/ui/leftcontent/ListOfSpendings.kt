@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
-import ui.CurrentScreen
 import ui.HomeScreenModel
 
 @Composable
@@ -44,37 +43,8 @@ fun ListOfSpending(
         elevation = 4.dp,
         modifier = modifier
     ) {
-
         // use box to stack elements, in our case: list, scrollbar and floating action button
-
-        when (screenModel.currentScreen.value) {
-            is CurrentScreen.ListOfSpending -> {
-                Spendings(
-                    onAddClick = { screenModel.currentScreen.value = CurrentScreen.AddEditSpending },
-                    list = spendings,
-                    onDeleteClick = onDeleteClick,
-                    modifier = modifier
-                )
-            }
-
-            is CurrentScreen.AddEditSpending -> {
-                AddEditSpending(
-                    onBackClick = { screenModel.currentScreen.value = CurrentScreen.ListOfSpending },
-                    onAddClick = onAddClick,
-                    onChooseCategoryButtonClick = onChooseCategoryButtonClick,
-                    selectedCategory = selectedCategory,
-                    modifier = modifier
-                )
-            }
-
-            is CurrentScreen.ChooseCategory -> {
-                Categories(
-                    categories,
-                    onSelectCategory,
-                )
-            }
-
-        }
+        
     }
 }
 
