@@ -1,32 +1,40 @@
 package ui
 
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpendingScreen(
     onItemClick: (Long) -> Unit,
+    onAddClick: (String, Double, Category) -> Unit,
+    category: List<Category>,
     spendings: List<Spending>,
-    onAddClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val stateVertical = rememberLazyGridState()
+    var dialog by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -61,7 +69,7 @@ fun SpendingScreen(
                         contentDescription = null
                     )
                 },
-                onClick = {},
+                onClick = { dialog = true },
                 expanded = !stateVertical.canScrollBackward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -75,10 +83,119 @@ fun SpendingScreen(
                     .wrapContentHeight()
             )
         }
+        if (dialog) {
+            AlertDialog(
+                onDismissRequest = { dialog = false },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                ),
+                modifier = Modifier
+                    .width(1000.dp)
+                    .padding(vertical = 24.dp)
+                    .clip(RoundedCornerShape(24.dp))
+            ) {
+                spendingDialog(onAddClick, { dialog = !dialog } ,category)
+            }
 
-
+        }
     }
+}
 
+
+@Composable
+fun spendingDialog(
+    onAddClick: (String, Double, Category) -> Unit,
+    onCloseDialog: () -> Unit,
+    category: List<Category>
+) {
+
+    var name by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var categoryName by remember { mutableStateOf("Wybierz kategorię") }
+    var chosenCategory by remember { mutableStateOf(0) }
+
+    Row {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(48.dp)
+                .fillMaxHeight()
+                .wrapContentWidth()
+
+        ) {
+            Text(
+                text = "Dodaj wydatek",
+                style = MaterialTheme.typography.displaySmall
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            OutlinedTextField(
+                value = name,
+                label = { Text("Nazwa") },
+                onValueChange = { name = it },
+                modifier = Modifier
+                    .padding(12.dp)
+                    .focusable()
+//                            .focusRequester(focusRequester)
+            )
+            Spacer(modifier = Modifier.height(36.dp))
+            OutlinedTextField(
+                value = categoryName ,
+                label = { Text("Kategria") },
+                singleLine = true,
+                readOnly = true,
+                onValueChange = { },
+                modifier = Modifier
+                    .padding(12.dp)
+                    .focusable()
+
+//                            .focusRequester(focusRequester)
+            )
+            Spacer(modifier = Modifier.height(36.dp))
+            OutlinedTextField(
+                value = amount,
+                label = { Text("Kwota") },
+                onValueChange = { amount = it },
+                modifier = Modifier
+                    .padding(12.dp)
+                    .focusable()
+//                            .focusRequester(focusRequester)
+            )
+            Spacer(modifier = Modifier.height(36.dp))
+            Button(
+                onClick = {
+                    onAddClick(name, amount.toDouble(), category[chosenCategory])
+                    run{ onCloseDialog() }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Dodaj")
+            }
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(48.dp)
+                .fillMaxHeight()
+                .weight(1f)
+        ) {
+            LazyColumn() {
+                items(category) {
+                    Text(
+                        text = it.name,
+                        modifier = Modifier
+                            .clickable {
+                                chosenCategory = category.indexOf(it)
+                                categoryName = it.name
+                            }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable

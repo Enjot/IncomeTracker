@@ -76,7 +76,9 @@ fun HomeScreen(
                 Destination.SPENDINGS -> {
                     SpendingScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
+                        onAddClick = { name, amount, Category -> screenModel.insertSpending(name,amount,Category)},
                         spendings = allSpendings.value,
+                        category = allCategories.value,
                         modifier = Modifier
                             .fillMaxSize()
                     )
