@@ -101,7 +101,6 @@ fun CategoryScreen(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .wrapContentHeight()
-
                 )
             }
             if (dialog) {

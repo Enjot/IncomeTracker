@@ -121,7 +121,6 @@ fun SpendingScreen(
             ) {
                 spendingDialog(onAddClick, { dialog = !dialog }, category)
             }
-
         }
     }
 }

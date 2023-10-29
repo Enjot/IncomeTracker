@@ -124,7 +124,7 @@ fun HomeScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
                         onAddClick = { name, amount, Category -> screenModel.insertSpending(name, amount, Category) },
                         spendings = allSpendings.value,
-                        category = allCategories.value.filter { it.isDeleted.toInt() == 0 },
+                        category = allCategories.value.filter { it.isVisible.toInt() == 0 },
                         modifier = Modifier
                             .fillMaxSize()
                     )
@@ -132,7 +132,7 @@ fun HomeScreen(
 
                 Destination.CATEGORIES -> {
                     CategoryScreen(
-                        onItemClick = { name -> screenModel.deleteCategory(name) },
+                        onItemClick = { name -> screenModel.setInvisibleCategory(name) },
                         onAddButtonClick = { name -> screenModel.insertCategory(name) },
                         categories = categories.value
                     )

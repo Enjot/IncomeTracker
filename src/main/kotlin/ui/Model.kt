@@ -13,11 +13,11 @@ import java.time.LocalDate
 class HomeScreenModel(
     driver: SqlDriver
 ) : ScreenModel {
-    
+
     private val database = Database(driver)
     private val categoryQueries = database.categoryQueries
     private val spendingQueries = database.spendingQueries
-    
+
     var allSpendings = spendingQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
@@ -27,50 +27,44 @@ class HomeScreenModel(
         .mapToList(Dispatchers.IO)
 
     var categories = allSpendings.combine(allCategories) { spending, category ->
-            val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
+        val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
 
-            spending.forEach {
-                if (!mapOfCategories.containsKey(it.category)) {
-                    mapOfCategories[it.category] = Pair(1, it.amount)
-                } else {
-                    mapOfCategories[it.category] = Pair(
-                        mapOfCategories.getValue(it.category).first + 1,
-                        mapOfCategories.getValue(it.category).second + it.amount
-                    )
-                }
+        spending.forEach {
+            if (!mapOfCategories.containsKey(it.category)) {
+                mapOfCategories[it.category] = Pair(1, it.amount)
+            } else {
+                mapOfCategories[it.category] = Pair(
+                    mapOfCategories.getValue(it.category).first + 1,
+                    mapOfCategories.getValue(it.category).second + it.amount
+                )
             }
-            category.forEach {
-                if (!mapOfCategories.containsKey(it.name) && it.isDeleted.toInt() == 0)
-                    mapOfCategories[it.name] = Pair(0, 0.00)
-            }
-        
-            return@combine mapOfCategories.entries.toList().sortedBy { it.key.uppercase() }
         }
-    
+        category.forEach {
+            if (!mapOfCategories.containsKey(it.name) && it.isVisible.toInt() == 0)
+                mapOfCategories[it.name] = Pair(0, 0.00)
+        }
+
+        return@combine mapOfCategories.entries.toList().sortedBy { it.key.uppercase() }
+    }
+
     fun insertSpending(name: String, amount: Double, category: Category) =
         spendingQueries.insert(name, amount, LocalDate.now().toString(), category.name)
 
     fun deleteSpending(id: Long) = spendingQueries.delete(id)
 
     fun insertCategory(name: String) {
-        if (!makeVisible(name)){
+        if (categoryQueries.alreadyExist(name).executeAsOne()) {
+            categoryQueries.setVisible(name)
+        } else {
             try {
                 categoryQueries.insert(name)
-            } catch (_: Exception) { }
-        }
-    }
-    // error name: org.sqlite.SQLiteException
-    fun deleteCategory(name: String) = categoryQueries.delete(name)
-
-    private fun makeVisible(name: String): Boolean {
-        return try {
-            categoryQueries.makeVisible(name)
-            true
-        } catch (_: Exception){
-            false
+            } catch (_: Throwable) {
+                // SQLiteException
+            }
         }
     }
     
+    fun setInvisibleCategory(name: String) = categoryQueries.setInvisible(name)
 
     init {
         insertCategory("Produkty spożywcze")
@@ -96,7 +90,7 @@ class HomeScreenModel(
         insertCategory("Chemia")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
-        
+
 //            repeat(50) {
 //                insertSpending("Kostka brukowa", 13.0, Category("Dom i ogród", 0))
 //            }

@@ -1,6 +1,6 @@
 CREATE TABLE category (
   name TEXT NOT NULL PRIMARY KEY UNIQUE,
-  isDeleted INTEGER NOT NULL DEFAULT 0
+  isVisible INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE INDEX categoryName ON category(name);
@@ -10,24 +10,27 @@ SELECT *
 FROM category
 ORDER BY name;
 
-select:
-SELECT name
-FROM category
-WHERE category.name = ?;
-
 insert:
 INSERT INTO category(name)
 VALUES (?);
 
-delete:
+setInvisible:
 UPDATE category
-SET isDeleted = TRUE
+SET isVisible = TRUE
 WHERE category.name = ?;
 
-makeVisible:
+setVisible:
 UPDATE category
-SET isDeleted = 0
+SET isVisible = 0
 WHERE category.name = ?;
+
+alreadyExist:
+SELECT EXISTS(
+SELECT *
+FROM category
+WHERE category.name = ?
+LIMIT 1
+);
 
 -- insertFullPlayerObject:
 -- INSERT INTO category(player_number, full_name)
