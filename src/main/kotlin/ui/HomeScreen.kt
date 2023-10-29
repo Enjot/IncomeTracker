@@ -23,6 +23,7 @@ fun HomeScreen(
     Surface(
         color = MaterialTheme.colorScheme.surface, modifier = modifier
     ) {
+        
         Row() {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -118,6 +119,7 @@ fun HomeScreen(
                         .padding(vertical = 12.dp)
                 )
             }
+            
             when (currentDestination) {
                 Destination.SPENDINGS -> {
                     SpendingScreen(
