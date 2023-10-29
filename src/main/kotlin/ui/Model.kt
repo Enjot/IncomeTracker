@@ -7,7 +7,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.Database
 import com.example.sqldelight.Category
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 
 class HomeScreenModel(
@@ -18,9 +18,30 @@ class HomeScreenModel(
     private val categoryQueries = database.categoryQueries
     private val spendingQueries = database.spendingQueries
 
+
     var allSpendings = spendingQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
+
+    var sortType: MutableStateFlow<SortType> = MutableStateFlow(SortType.AmountDec)
+
+    var sortedSpendings = allSpendings.combine(sortType) { spending, sortType ->
+
+        val currentSortType = when(sortType) {
+            SortType.AmountInc -> spending.sortedBy { it.amount }
+            SortType.AmountDec -> spending.sortedBy { it.amount }.reversed()
+            SortType.DateInc -> spending.sortedBy { it.date}
+            SortType.DateDec -> spending.sortedBy { it.date }.reversed()
+            SortType.NameInc -> spending.sortedBy { it.name }
+            SortType.NameDec -> spending.sortedBy { it.name }.reversed()
+        }
+        return@combine currentSortType
+    }
+
+    fun selectSortType(type: SortType) {
+        sortType.value = type
+    }
+
 
     var allCategories = categoryQueries.selectAll()
         .asFlow()
@@ -46,6 +67,7 @@ class HomeScreenModel(
 
         return@combine mapOfCategories.entries.toList().sortedBy { it.key.uppercase() }
     }
+
 
     fun insertSpending(name: String, amount: Double, category: Category) =
         spendingQueries.insert(name, amount, LocalDate.now().toString(), category.name)
@@ -91,8 +113,9 @@ class HomeScreenModel(
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
 
-//            repeat(50) {
-//                insertSpending("Kostka brukowa", 13.0, Category("Dom i ogród", 0))
-//            }
     }
+}
+
+enum class SortType{
+    AmountInc, AmountDec, DateInc, DateDec, NameInc, NameDec
 }

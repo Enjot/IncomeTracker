@@ -1,26 +1,38 @@
 package ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -31,6 +43,7 @@ import com.example.sqldelight.Spending
 @Composable
 fun SpendingScreen(
     onItemClick: (Long) -> Unit,
+    onSortClick: (SortType) -> Unit,
     onAddClick: (String, Double, Category) -> Unit,
     category: List<Category>,
     spendings: List<Spending>,
@@ -39,6 +52,17 @@ fun SpendingScreen(
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    var currentSortType by remember { mutableStateOf("") }
+
+    val arrowOrientation: Float by animateFloatAsState(
+        targetValue = if (expanded) 180F else 0F,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = 800f
+        )
+    )
+
 
     Surface(
         modifier = Modifier
@@ -48,17 +72,137 @@ fun SpendingScreen(
     ) {
         Box {
             Column {
-                Row {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+
                     Text(
                         text = "Zarządzaj wydatkami",
                         style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier
+                            .weight(1f)
                     )
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize(Alignment.BottomEnd)
+                            .padding(vertical = 24.dp, horizontal = 36.dp)
+                    ) {
+                        Box {
+                            OutlinedTextField(
+                                value = "Sortuj po: $currentSortType",
+                                onValueChange = { },
+                                singleLine = true,
+                                readOnly = true,
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .rotate(arrowOrientation)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .width(300.dp)
+
+                            )
+                            Spacer(
+                                modifier = Modifier
+                                    .width(300.dp)
+                                    .height(55.dp)
+                                    .clickable { expanded = !expanded }
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Cena rosnąco") },
+                                onClick = {
+                                    onSortClick(SortType.AmountInc)
+                                    currentSortType = "Cena rosnąco"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                },
+                                modifier = Modifier
+                                    .width(250.dp)
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Cena malejąco") },
+                                onClick = {
+                                    onSortClick(SortType.AmountDec)
+                                    currentSortType = "Cena malejąco"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                })
+                            DropdownMenuItem(
+                                text = { Text("Od najnowszych") },
+                                onClick = {
+                                    onSortClick(SortType.DateInc)
+                                    currentSortType = "Od najnowszych"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                })
+                            DropdownMenuItem(
+                                text = { Text("Od najstarszych") },
+                                onClick = {
+                                    onSortClick(SortType.DateDec)
+                                    currentSortType = "Od najstarszych"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                })
+                            DropdownMenuItem(
+                                text = { Text("A - Z") },
+                                onClick = {
+                                    onSortClick(SortType.NameInc)
+                                    currentSortType = "A - Z"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                })
+                            DropdownMenuItem(
+                                text = { Text("Z - A") },
+                                onClick = {
+                                    onSortClick(SortType.NameDec)
+                                    currentSortType = "Z - A"
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                })
+
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(48.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
                     state = stateVertical
                 ) {
+
                     items(spendings) {
                         SingleSpendingItem(
                             onItemClick,
