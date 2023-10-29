@@ -29,7 +29,7 @@ fun main() = application {
         state = state,
         resizable = true
     ) {
-        window.minimumSize = Dimension(900, 450)
+        window.minimumSize = Dimension(1280, 720)
         AppTheme() {
             Navigator(HomeScreen())
         }

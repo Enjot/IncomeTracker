@@ -54,8 +54,7 @@ class HomeScreenModel(
 
     fun insertCategory(name: String) = try { categoryQueries.insert(name) } catch (_: Exception) { }
     // error name: org.sqlite.SQLiteException
-    
-    private fun deleteCategory(name: String) = categoryQueries.delete(name)
+    fun deleteCategory(name: String) = categoryQueries.delete(name)
     
 
     init {

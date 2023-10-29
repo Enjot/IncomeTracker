@@ -86,7 +86,8 @@ fun HomeScreen(
 
                 Destination.CATEGORIES -> {
                     CategoryScreen(
-                        onAddClick = { name -> screenModel.insertCategory(name) },
+                        onItemClick = { name -> screenModel.deleteCategory(name)},
+                        onAddButtonClick = { name -> screenModel.insertCategory(name) },
                         categories = categories.value
                     )
                 }

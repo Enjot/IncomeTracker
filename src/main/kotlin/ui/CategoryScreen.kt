@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
-    onAddClick: (String) -> Unit,
+    onItemClick: (String) -> Unit,
+    onAddButtonClick: (String) -> Unit,
     categories: List<MutableMap.MutableEntry<String, Pair<Int, Double>>>
 ) {
     val stateVertical = rememberLazyGridState()
@@ -44,6 +45,7 @@ fun CategoryScreen(
                 ) {
                     items(categories) {
                         CategoryItem(
+                            onClick = onItemClick,
                             name = it.key,
                             spendingAmount = it.value.first,
                             spendingSum = it.value.second
@@ -107,7 +109,7 @@ fun CategoryScreen(
                         Spacer(modifier = Modifier.height(36.dp))
                         Button(
                             onClick = {
-                                onAddClick(name)
+                                onAddButtonClick(name)
                                 dialog = false
                             },
                             modifier = Modifier.align(Alignment.End)
@@ -128,6 +130,7 @@ fun CategoryScreen(
 
 @Composable
 fun CategoryItem(
+    onClick: (String) -> Unit,
     name: String,
     spendingAmount: Int,
     spendingSum: Double,
@@ -137,7 +140,7 @@ fun CategoryItem(
             .width(200.dp)
             .height(100.dp)
             .padding(end = 36.dp)
-            .clickable { }
+            .clickable { onClick(name) }
     ) {
         Text(
             text = name,
