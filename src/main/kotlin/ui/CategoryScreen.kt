@@ -28,7 +28,7 @@ fun CategoryScreen(
 ) {
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
-
+    
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -69,10 +69,21 @@ fun CategoryScreen(
             )
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(stateVertical),
+                style = ScrollbarStyle(
+                    minimalHeight = 16.dp,
+                    thickness = 8.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    hoverDurationMillis = 300,
+                    unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+                    hoverColor = MaterialTheme.colorScheme.outline
+                ),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
+                    .padding(vertical = 8.dp)
                     .wrapContentHeight()
+                    
             )
+            
 
             if (dialog) {
                 AlertDialog(

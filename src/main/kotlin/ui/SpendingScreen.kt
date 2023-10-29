@@ -77,8 +77,17 @@ fun SpendingScreen(
 
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(stateVertical),
+                style = ScrollbarStyle(
+                    minimalHeight = 16.dp,
+                    thickness = 8.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    hoverDurationMillis = 300,
+                    unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+                    hoverColor = MaterialTheme.colorScheme.outline
+                ),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
+                    .padding(vertical = 8.dp)
                     .wrapContentHeight()
             )
         }
