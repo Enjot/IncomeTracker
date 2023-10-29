@@ -38,9 +38,13 @@ fun HomeScreen(
                     label = { Text("Wydatki") },
                     icon = {
                         Icon(
-                            painterResource("drawable/icons/spending.svg"),
-                            contentDescription = null
-                        )
+                            if (currentDestination == Destination.SPENDINGS) {
+                                painterResource("drawable/icons/spendingFilled.svg")
+                            } else {
+                                painterResource("drawable/icons/spending.svg")
+                            },
+                            contentDescription = null,
+                            )
                     },
                     modifier = Modifier
                         .padding(vertical = 12.dp)
@@ -51,7 +55,11 @@ fun HomeScreen(
                     label = { Text("Kategorie") },
                     icon = {
                         Icon(
-                            painterResource("drawable/icons/category.svg"),
+                            if (currentDestination == Destination.CATEGORIES) {
+                                painterResource("drawable/icons/categoryFilled.svg")
+                            } else {
+                                painterResource("drawable/icons/category.svg")
+                            },
                             contentDescription = null
                         )
                     },
@@ -64,7 +72,45 @@ fun HomeScreen(
                     label = { Text("Limity") },
                     icon = {
                         Icon(
-                            painterResource("drawable/icons/limit.svg"),
+                            if (currentDestination == Destination.LIMITS) {
+                                painterResource("drawable/icons/limitsFilled.svg")
+                            } else {
+                                painterResource("drawable/icons/limits.svg")
+                            },
+                            contentDescription = null
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+                NavigationRailItem(
+                    selected = currentDestination == Destination.CHARTS,
+                    onClick = { currentDestination = Destination.CHARTS },
+                    label = { Text("Statystyki") },
+                    icon = {
+                        Icon(
+                            if (currentDestination == Destination.CHARTS) {
+                                painterResource("drawable/icons/chartsFilled.svg")
+                            } else {
+                                painterResource("drawable/icons/charts.svg")
+                            },
+                            contentDescription = null
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(vertical = 12.dp)
+                )
+                NavigationRailItem(
+                    selected = currentDestination == Destination.SETTINGS,
+                    onClick = { currentDestination = Destination.SETTINGS },
+                    label = { Text("Ustawienia") },
+                    icon = {
+                        Icon(
+                            if (currentDestination == Destination.SETTINGS) {
+                                painterResource("drawable/icons/settingsFilled.svg")
+                            } else {
+                                painterResource("drawable/icons/settings.svg")
+                            },
                             contentDescription = null
                         )
                     },
@@ -76,7 +122,7 @@ fun HomeScreen(
                 Destination.SPENDINGS -> {
                     SpendingScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
-                        onAddClick = { name, amount, Category -> screenModel.insertSpending(name,amount,Category)},
+                        onAddClick = { name, amount, Category -> screenModel.insertSpending(name, amount, Category) },
                         spendings = allSpendings.value,
                         category = allCategories.value.filter { it.isDeleted.toInt() == 0 },
                         modifier = Modifier
@@ -86,7 +132,7 @@ fun HomeScreen(
 
                 Destination.CATEGORIES -> {
                     CategoryScreen(
-                        onItemClick = { name -> screenModel.deleteCategory(name)},
+                        onItemClick = { name -> screenModel.deleteCategory(name) },
                         onAddButtonClick = { name -> screenModel.insertCategory(name) },
                         categories = categories.value
                     )
@@ -95,11 +141,19 @@ fun HomeScreen(
                 Destination.LIMITS -> {
                     LimitScreen()
                 }
+
+                Destination.CHARTS -> {
+                    LimitScreen()
+                }
+
+                Destination.SETTINGS -> {
+                    LimitScreen()
+                }
             }
         }
     }
 }
 
 enum class Destination {
-    SPENDINGS, CATEGORIES, LIMITS
+    SPENDINGS, CATEGORIES, LIMITS, CHARTS, SETTINGS
 }
