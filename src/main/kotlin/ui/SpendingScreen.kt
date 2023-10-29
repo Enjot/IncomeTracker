@@ -1,21 +1,25 @@
 package ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,7 +27,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SpendingScreen(
     onItemClick: (Long) -> Unit,
@@ -34,10 +38,13 @@ fun SpendingScreen(
 ) {
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
+    var showScrollbar by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
+            .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
         Box {
             Column {
@@ -78,22 +85,28 @@ fun SpendingScreen(
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
             )
-
-            VerticalScrollbar(
-                adapter = rememberScrollbarAdapter(stateVertical),
-                style = ScrollbarStyle(
-                    minimalHeight = 16.dp,
-                    thickness = 8.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    hoverDurationMillis = 300,
-                    unhoverColor = MaterialTheme.colorScheme.outlineVariant,
-                    hoverColor = MaterialTheme.colorScheme.outline
-                ),
+            AnimatedVisibility(
+                visible = showScrollbar,
+                enter = fadeIn(),
+                exit = fadeOut(),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .padding(vertical = 8.dp)
-                    .wrapContentHeight()
-            )
+            ) {
+                VerticalScrollbar(
+                    adapter = rememberScrollbarAdapter(stateVertical),
+                    style = ScrollbarStyle(
+                        minimalHeight = 16.dp,
+                        thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        hoverDurationMillis = 300,
+                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+                        hoverColor = MaterialTheme.colorScheme.outline
+                    ),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .wrapContentHeight()
+                )
+            }
         }
         if (dialog) {
             AlertDialog(
@@ -106,7 +119,7 @@ fun SpendingScreen(
                     .padding(vertical = 24.dp)
                     .clip(RoundedCornerShape(24.dp))
             ) {
-                spendingDialog(onAddClick, { dialog = !dialog } ,category)
+                spendingDialog(onAddClick, { dialog = !dialog }, category)
             }
 
         }
@@ -153,7 +166,7 @@ fun spendingDialog(
             )
             Spacer(modifier = Modifier.height(36.dp))
             OutlinedTextField(
-                value = categoryName ,
+                value = categoryName,
                 label = { Text("Kategria") },
                 singleLine = true,
                 readOnly = true,
@@ -178,7 +191,7 @@ fun spendingDialog(
             Button(
                 onClick = {
                     onAddClick(name, amount.toDouble(), category[chosenCategory])
-                    run{ onCloseDialog() }
+                    run { onCloseDialog() }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
@@ -194,11 +207,14 @@ fun spendingDialog(
                 .fillMaxHeight()
                 .weight(1f)
         ) {
-            LazyColumn {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(200.dp)
+            ) {
                 items(category) {
                     Text(
                         text = it.name,
                         modifier = Modifier
+                            .padding(4.dp)
                             .clickable {
                                 chosenCategory = category.indexOf(it)
                                 categoryName = it.name

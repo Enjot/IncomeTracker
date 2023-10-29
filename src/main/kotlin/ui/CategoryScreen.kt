@@ -1,5 +1,8 @@
 package ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,14 +15,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CategoryScreen(
     onItemClick: (String) -> Unit,
@@ -28,9 +34,13 @@ fun CategoryScreen(
 ) {
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
+    var showScrollbar by remember { mutableStateOf(false) }
 
     Surface(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
+            .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
         Box {
             Column {
@@ -71,24 +81,29 @@ fun CategoryScreen(
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
             )
-            VerticalScrollbar(
-                adapter = rememberScrollbarAdapter(stateVertical),
-                style = ScrollbarStyle(
-                    minimalHeight = 16.dp,
-                    thickness = 8.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    hoverDurationMillis = 300,
-                    unhoverColor = MaterialTheme.colorScheme.outlineVariant,
-                    hoverColor = MaterialTheme.colorScheme.outline
-                ),
+            AnimatedVisibility(
+                visible = showScrollbar,
+                enter = fadeIn(),
+                exit = fadeOut(),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .padding(vertical = 8.dp)
-                    .wrapContentHeight()
+            ) {
+                VerticalScrollbar(
+                    adapter = rememberScrollbarAdapter(stateVertical),
+                    style = ScrollbarStyle(
+                        minimalHeight = 16.dp,
+                        thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        hoverDurationMillis = 300,
+                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+                        hoverColor = MaterialTheme.colorScheme.outline
+                    ),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .wrapContentHeight()
 
-            )
-
-
+                )
+            }
             if (dialog) {
                 AlertDialog(
                     onDismissRequest = { dialog = false },
