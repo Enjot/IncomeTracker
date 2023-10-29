@@ -24,6 +24,11 @@ UPDATE category
 SET isDeleted = TRUE
 WHERE category.name = ?;
 
+makeVisible:
+UPDATE category
+SET isDeleted = 0
+WHERE category.name = ?;
+
 -- insertFullPlayerObject:
 -- INSERT INTO category(player_number, full_name)
 -- VALUES ?;

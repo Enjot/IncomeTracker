@@ -52,9 +52,24 @@ class HomeScreenModel(
 
     fun deleteSpending(id: Long) = spendingQueries.delete(id)
 
-    fun insertCategory(name: String) = try { categoryQueries.insert(name) } catch (_: Exception) { }
+    fun insertCategory(name: String) {
+        if (!makeVisible(name)){
+            try {
+                categoryQueries.insert(name)
+            } catch (_: Exception) { }
+        }
+    }
     // error name: org.sqlite.SQLiteException
     fun deleteCategory(name: String) = categoryQueries.delete(name)
+
+    private fun makeVisible(name: String): Boolean {
+        return try {
+            categoryQueries.makeVisible(name)
+            true
+        } catch (_: Exception){
+            false
+        }
+    }
     
 
     init {
