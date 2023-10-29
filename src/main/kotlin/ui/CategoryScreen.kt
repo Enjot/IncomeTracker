@@ -28,7 +28,7 @@ fun CategoryScreen(
 ) {
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
-    
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -51,6 +51,10 @@ fun CategoryScreen(
                             spendingSum = it.value.second
                         )
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(128.dp))
+                    }
+
                 }
             }
             ExtendedFloatingActionButton(
@@ -62,7 +66,7 @@ fun CategoryScreen(
                     )
                 },
                 onClick = { dialog = true },
-                expanded = !stateVertical.canScrollBackward,
+                expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
@@ -81,9 +85,9 @@ fun CategoryScreen(
                     .align(Alignment.CenterEnd)
                     .padding(vertical = 8.dp)
                     .wrapContentHeight()
-                    
+
             )
-            
+
 
             if (dialog) {
                 AlertDialog(
@@ -92,7 +96,7 @@ fun CategoryScreen(
                 ) {
 
                     val focusRequester = remember { FocusRequester() }
-                    
+
                     var name by remember { mutableStateOf("") }
 
                     Column(
@@ -128,7 +132,7 @@ fun CategoryScreen(
                             Text("Dodaj")
                         }
                     }
-                    
+
                     LaunchedEffect(Unit) {
                         focusRequester.requestFocus()
                     }

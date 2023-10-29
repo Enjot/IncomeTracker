@@ -58,6 +58,10 @@ fun SpendingScreen(
                             it
                         )
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(128.dp))
+
+                    }
                 }
             }
             ExtendedFloatingActionButton(
@@ -69,7 +73,7 @@ fun SpendingScreen(
                     )
                 },
                 onClick = { dialog = true },
-                expanded = !stateVertical.canScrollBackward,
+                expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
@@ -190,7 +194,7 @@ fun spendingDialog(
                 .fillMaxHeight()
                 .weight(1f)
         ) {
-            LazyColumn() {
+            LazyColumn {
                 items(category) {
                     Text(
                         text = it.name,
@@ -215,7 +219,7 @@ fun SingleSpendingItem(
         modifier = Modifier
             .width(300.dp)
             .height(80.dp)
-            .padding(end = 48.dp)
+            .padding(end = 36.dp)
             .clickable { onItemClick(item.id) }
     ) {
         Column(
