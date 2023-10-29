@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,7 +49,7 @@ fun SpendingScreen(
                 }
                 Spacer(modifier = Modifier.height(48.dp))
                 LazyVerticalGrid(
-                    columns = GridCells.FixedSize(300.dp),
+                    columns = GridCells.Adaptive(300.dp),
                     state = stateVertical
                 ) {
                     items(spendings) {

@@ -40,7 +40,7 @@ fun CategoryScreen(
                 )
                 Spacer(modifier = Modifier.height(48.dp))
                 LazyVerticalGrid(
-                    columns = GridCells.FixedSize(250.dp),
+                    columns = GridCells.Adaptive(250.dp),
                     state = stateVertical
                 ) {
                     items(categories) {
