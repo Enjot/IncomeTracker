@@ -1,10 +1,10 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.compose")
+    kotlin("jvm") version "1.9.20"
+    id("org.jetbrains.compose") version "1.5.10"
     id("app.cash.sqldelight") version "2.0.0"
-    id ("com.google.devtools.ksp") version "1.9.10-1.0.13"
+    id ("com.google.devtools.ksp") version "1.9.20-1.0.13"
 
 }
 
@@ -19,28 +19,23 @@ repositories {
 }
 
 dependencies {
-    implementation(compose.desktop.currentOs)
+    implementation(compose.desktop.windows_x64)
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
     
+    // JSystem Theme Detector
     implementation ("com.github.Dansoftowner:jSystemThemeDetector:3.8")
     
-    val voyagerVersion = "1.0.0-rc08"
-    val koinVersion = "3.5.0"
-
     // Voyager
-    implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
-    implementation ("cafe.adriel.voyager:voyager-koin:$voyagerVersion")
+    implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc08")
+    implementation("cafe.adriel.voyager:voyager-koin:1.0.0-rc08")
     
     // SQLDelight
     implementation("app.cash.sqldelight:sqlite-driver:2.0.0")
     implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
 
     // Koin
-    implementation ("io.insert-koin:koin-core:$koinVersion")
+    implementation ("io.insert-koin:koin-core:3.5.0")
 }
 
 compose.desktop {
