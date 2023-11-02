@@ -22,85 +22,9 @@ import androidx.compose.ui.unit.dp
 fun LimitScreen() {
     Surface(
         modifier = Modifier.fillMaxSize()
+
     ) {
 
-        var expanded by remember { mutableStateOf(false) }
 
-        val arrowOrientation: Float by animateFloatAsState(
-            targetValue = if (expanded) 180F else 0F,
-            animationSpec = spring(
-                dampingRatio= Spring.DampingRatioMediumBouncy,
-                stiffness = 800f
-            )
-        )
-        
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.TopStart)
-        ) {
-            Box {
-                OutlinedTextField(
-                    value = "xD",
-                    onValueChange = {  },
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .rotate(arrowOrientation)
-                        )
-                    },
-                    modifier = Modifier
-                        .width(250.dp)
-                        
-                )
-                Spacer(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .height(55.dp)
-                        .clickable { expanded = !expanded }
-                )
-            }
-
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Edit") },
-                    onClick = { /* Handle edit! */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Edit,
-                            contentDescription = null
-                        )
-                    },
-                    modifier = Modifier
-                        .width(250.dp)
-                )
-                DropdownMenuItem(
-                    text = { Text("Settings") },
-                    onClick = { /* Handle settings! */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    })
-                Divider()
-                DropdownMenuItem(
-                    text = { Text("Send Feedback") },
-                    onClick = { /* Handle send feedback! */ },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Email,
-                            contentDescription = null
-                        )
-                    },
-                    trailingIcon = { Text("F11", textAlign = TextAlign.Center) })
-            }
-        }
     }
 }

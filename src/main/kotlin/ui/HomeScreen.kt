@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
-    val allSpendings = screenModel.allSpendings.collectAsState(emptyList())
+    val allSpendings = screenModel.sortedSpendings.collectAsState(emptyList())
     val allCategories = screenModel.allCategories.collectAsState(emptyList())
     val categories = screenModel.categories.collectAsState(emptyList())
-    var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
+    var currentDestination by remember { mutableStateOf(Destination.LIMITS) }
 
     Surface(
         color = MaterialTheme.colorScheme.surface, modifier = modifier
@@ -125,6 +125,7 @@ fun HomeScreen(
                     SpendingScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
                         onAddClick = { name, amount, Category -> screenModel.insertSpending(name, amount, Category) },
+                        onSortClick = { sortType -> screenModel.selectSortType(sortType) },
                         spendings = allSpendings.value,
                         category = allCategories.value.filter { it.isVisible.toInt() == 0 },
                         modifier = Modifier
@@ -141,7 +142,9 @@ fun HomeScreen(
                 }
 
                 Destination.LIMITS -> {
-                    LimitScreen()
+                    LimitScreen(
+
+                    )
                 }
 
                 Destination.CHARTS -> {
