@@ -1,6 +1,8 @@
 package ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
@@ -12,12 +14,15 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -35,7 +40,15 @@ fun CategoryScreen(
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
-
+    var expanded by remember { mutableStateOf(false) }
+    var currentSortType by remember { mutableStateOf("od A do Z") }
+    val arrowOrientation: Float by animateFloatAsState(
+        targetValue = if (expanded) 180F else 0F,
+        animationSpec = spring(
+            stiffness = 1000f
+        )
+    )
+    
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -44,11 +57,135 @@ fun CategoryScreen(
     ) {
         Box {
             Column {
-                Text(
-                    text = "Zarządzaj kategoriami",
-                    style = MaterialTheme.typography.displayLarge,
-                )
-                Spacer(modifier = Modifier.height(48.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Zarządzaj kategoriami",
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier.weight(1f).clickable{}
+                    )
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize(Alignment.BottomEnd)
+                            .padding(vertical = 24.dp, horizontal = 36.dp)
+                    ) {
+                        Box {
+                            OutlinedTextField(
+                                value = "Sortuj $currentSortType",
+                                onValueChange = { },
+                                singleLine = true,
+                                readOnly = true,
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .rotate(arrowOrientation)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .width(250.dp)
+
+                            )
+                            Spacer(
+                                modifier = Modifier
+                                    .width(250.dp)
+                                    .height(55.dp)
+                                    .clickable { expanded = !expanded }
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.width(250.dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("od najtańszych") },
+                                onClick = {
+                                    currentSortType = "od najtańszych"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("od najdroższych") },
+                                onClick = {
+                                    currentSortType = "od najdroższych"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("od najnowszych") },
+                                onClick = {
+                                    currentSortType = "od najnowszych"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("od najstarszych") },
+                                onClick = {
+                                    currentSortType = "od najstarszych"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("od A do Z") },
+                                onClick = {
+                                    currentSortType = "od A do Z"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("od Z do A") },
+                                onClick = {
+
+                                    currentSortType = "od Z do A"
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Outlined.Settings,
+                                        contentDescription = null
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(250.dp),
                     state = stateVertical

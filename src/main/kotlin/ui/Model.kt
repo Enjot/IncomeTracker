@@ -7,7 +7,8 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.Database
 import com.example.sqldelight.Category
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 
 class HomeScreenModel(
@@ -23,7 +24,7 @@ class HomeScreenModel(
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    var sortType: MutableStateFlow<SortType> = MutableStateFlow(SortType.AmountDec)
+    var sortType: MutableStateFlow<SortType> = MutableStateFlow(SortType.NameInc)
 
     var sortedSpendings = allSpendings.combine(sortType) { spending, sortType ->
 
@@ -61,7 +62,7 @@ class HomeScreenModel(
             }
         }
         category.forEach {
-            if (!mapOfCategories.containsKey(it.name) && it.isVisible.toInt() == 0)
+            if (!mapOfCategories.containsKey(it.name) && it.isVisible.toInt() == 1)
                 mapOfCategories[it.name] = Pair(0, 0.00)
         }
 
@@ -86,9 +87,13 @@ class HomeScreenModel(
         }
     }
     
-    fun setInvisibleCategory(name: String) = categoryQueries.setInvisible(name)
+    fun setHiddenCategory(name: String) = categoryQueries.setHidden(name)
 
+    
+    
     init {
+        
+        // temporary init categories to test functionality
         insertCategory("Produkty spożywcze")
         insertCategory("Transport")
         insertCategory("Rachunki")
@@ -112,7 +117,24 @@ class HomeScreenModel(
         insertCategory("Chemia")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
+        insertCategory("Zdrowie")
 
+        // temporary init spendings to test functionality
+        insertSpending("Buty", 170.0, Category("Moda", 0))
+        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 0))
+        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 0))
+        insertSpending("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 0))
+        insertSpending("Kindle Paperwhite 5", 550.0, Category("Elektronika", 0))
+        insertSpending("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 0))
+        insertSpending("Tesla", 864.0, Category("Akcje giełdowe", 0))
+        insertSpending("Mieszkanie", 2700.0, Category("Mieszkanie", 0))
+        insertSpending("4pak piwa", 14.0, Category("Alkohol", 0))
+        insertSpending("Netflix", 56.0, Category("Subskrybcje", 0))
+        insertSpending("Tidal", 19.99, Category("Subskrybcje", 0))
+        insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 0))
+        insertSpending("Uber", 23.0, Category("Transport", 0))
+        insertSpending("Bolt", 19.0, Category("Transport", 0))
+        
     }
 }
 
