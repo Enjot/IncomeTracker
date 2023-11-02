@@ -379,7 +379,7 @@ fun SingleSpendingItem(
     Row(
         modifier = Modifier
             .width(300.dp)
-            .height(80.dp)
+            .height(90.dp)
             .padding(end = 36.dp)
             .clickable { onItemClick(item.id) }
     ) {
