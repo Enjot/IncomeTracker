@@ -31,12 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
 import com.example.sqldelight.Spending
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SpendingScreen(
     onItemClick: (Long) -> Unit,
-    onSortClick: (SortType) -> Unit,
+    onSortClick: (SpendingSort) -> Unit,
     onAddClick: (String, Double, Category) -> Unit,
     category: List<Category>,
     spendings: List<Spending>,
@@ -55,6 +56,9 @@ fun SpendingScreen(
         )
     )
 
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -62,7 +66,9 @@ fun SpendingScreen(
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
+
         Box {
+
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -75,7 +81,7 @@ fun SpendingScreen(
                         style = MaterialTheme.typography.displayLarge,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable {  }
+                            .clickable { }
                     )
                     Box(
                         modifier = Modifier
@@ -115,7 +121,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od najtańszych") },
                                 onClick = {
-                                    onSortClick(SortType.AmountInc)
+                                    onSortClick(SpendingSort.AmountInc)
                                     currentSortType = "od najtańszych"
                                     expanded = false
                                 },
@@ -129,7 +135,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od najdroższych") },
                                 onClick = {
-                                    onSortClick(SortType.AmountDec)
+                                    onSortClick(SpendingSort.AmountDec)
                                     currentSortType = "od najdroższych"
                                     expanded = false
                                 },
@@ -143,7 +149,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od najnowszych") },
                                 onClick = {
-                                    onSortClick(SortType.DateInc)
+                                    onSortClick(SpendingSort.DateInc)
                                     currentSortType = "od najnowszych"
                                     expanded = false
                                 },
@@ -157,7 +163,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od najstarszych") },
                                 onClick = {
-                                    onSortClick(SortType.DateDec)
+                                    onSortClick(SpendingSort.DateDec)
                                     currentSortType = "od najstarszych"
                                     expanded = false
                                 },
@@ -171,7 +177,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od A do Z") },
                                 onClick = {
-                                    onSortClick(SortType.NameInc)
+                                    onSortClick(SpendingSort.NameInc)
                                     currentSortType = "od A do Z"
                                     expanded = false
                                 },
@@ -185,7 +191,7 @@ fun SpendingScreen(
                             DropdownMenuItem(
                                 text = { Text("od Z do A") },
                                 onClick = {
-                                    onSortClick(SortType.NameDec)
+                                    onSortClick(SpendingSort.NameDec)
                                     currentSortType = "od Z do A"
                                     expanded = false
                                 },
@@ -197,6 +203,14 @@ fun SpendingScreen(
                                 }
                             )
                         }
+                    }
+                    OutlinedButton(
+                        onClick = { showBottomSheet = !showBottomSheet },
+                        modifier = Modifier
+                            .wrapContentSize(Alignment.BottomEnd)
+                            .padding(top = 24.dp, bottom = 24.dp, end = 36.dp)
+                    ) {
+                        Text("Filtruj")
                     }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -266,6 +280,28 @@ fun SpendingScreen(
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 spendingDialog(onAddClick, { dialog = !dialog }, category)
+            }
+        }
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState
+        ) {
+            // Sheet content, default column
+            Button(
+                onClick = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showBottomSheet = false
+                        }
+                    }
+                },
+                modifier = Modifier.padding(24.dp).align(Alignment.End)
+            ) {
+                Text("Ukryj")
             }
         }
     }

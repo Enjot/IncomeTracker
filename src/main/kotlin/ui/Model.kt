@@ -24,23 +24,24 @@ class HomeScreenModel(
         .asFlow()
         .mapToList(Dispatchers.IO)
 
-    var sortType: MutableStateFlow<SortType> = MutableStateFlow(SortType.NameInc)
+    var spendingSort: MutableStateFlow<SpendingSort> = MutableStateFlow(SpendingSort.NameInc)
+    
+    
+    var sortedSpendings = allSpendings.combine(spendingSort) { spending, sortType ->
 
-    var sortedSpendings = allSpendings.combine(sortType) { spending, sortType ->
-
-        val currentSortType = when(sortType) {
-            SortType.AmountInc -> spending.sortedBy { it.amount }
-            SortType.AmountDec -> spending.sortedBy { it.amount }.reversed()
-            SortType.DateInc -> spending.sortedBy { it.date}
-            SortType.DateDec -> spending.sortedBy { it.date }.reversed()
-            SortType.NameInc -> spending.sortedBy { it.name }
-            SortType.NameDec -> spending.sortedBy { it.name }.reversed()
+        val currentSpendingSort = when(sortType) {
+            SpendingSort.AmountInc -> spending.sortedBy { it.amount }
+            SpendingSort.AmountDec -> spending.sortedBy { it.amount }.reversed()
+            SpendingSort.DateInc -> spending.sortedBy { it.date}
+            SpendingSort.DateDec -> spending.sortedBy { it.date }.reversed()
+            SpendingSort.NameInc -> spending.sortedBy { it.name }
+            SpendingSort.NameDec -> spending.sortedBy { it.name }.reversed()
         }
-        return@combine currentSortType
+        return@combine currentSpendingSort
     }
 
-    fun selectSortType(type: SortType) {
-        sortType.value = type
+    fun selectSortType(type: SpendingSort) {
+        spendingSort.value = type
     }
 
 
@@ -138,6 +139,6 @@ class HomeScreenModel(
     }
 }
 
-enum class SortType{
+enum class SpendingSort{
     AmountInc, AmountDec, DateInc, DateDec, NameInc, NameDec
 }

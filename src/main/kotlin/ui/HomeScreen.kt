@@ -132,7 +132,7 @@ fun HomeScreen(
                             .fillMaxSize()
                     )
                 }
-
+                
                 Destination.CATEGORIES -> {
                     CategoryScreen(
                         onItemClick = { name -> screenModel.setHiddenCategory(name) },
