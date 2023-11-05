@@ -25,19 +25,30 @@ class HomeScreenModel(
         .mapToList(Dispatchers.IO)
 
     var spendingSort: MutableStateFlow<SpendingSort> = MutableStateFlow(SpendingSort.NameInc)
-    
-    
+
+    var categoryFilter: MutableStateFlow<String> = MutableStateFlow("")
+
     var sortedSpendings = allSpendings.combine(spendingSort) { spending, sortType ->
 
-        val currentSpendingSort = when(sortType) {
+        return@combine when (sortType) {
             SpendingSort.AmountInc -> spending.sortedBy { it.amount }
             SpendingSort.AmountDec -> spending.sortedBy { it.amount }.reversed()
-            SpendingSort.DateInc -> spending.sortedBy { it.date}
+            SpendingSort.DateInc -> spending.sortedBy { it.date }
             SpendingSort.DateDec -> spending.sortedBy { it.date }.reversed()
             SpendingSort.NameInc -> spending.sortedBy { it.name }
             SpendingSort.NameDec -> spending.sortedBy { it.name }.reversed()
         }
-        return@combine currentSpendingSort
+
+    }.combine(categoryFilter) { spendingList, filter ->
+        return@combine if (filter == "") {
+            spendingList
+        } else {
+            spendingList.filter { spending -> spending.category == filter }
+        }
+    }
+
+    fun selectSortedCategory(category: String) {
+        categoryFilter.value = category
     }
 
     fun selectSortType(type: SpendingSort) {
@@ -87,13 +98,12 @@ class HomeScreenModel(
             }
         }
     }
-    
+
     fun setHiddenCategory(name: String) = categoryQueries.setHidden(name)
 
-    
-    
+
     init {
-        
+
         // temporary init categories to test functionality
         insertCategory("Produkty spożywcze")
         insertCategory("Transport")
@@ -135,10 +145,10 @@ class HomeScreenModel(
         insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 0))
         insertSpending("Uber", 23.0, Category("Transport", 0))
         insertSpending("Bolt", 19.0, Category("Transport", 0))
-        
+
     }
 }
 
-enum class SpendingSort{
+enum class SpendingSort {
     AmountInc, AmountDec, DateInc, DateDec, NameInc, NameDec
 }

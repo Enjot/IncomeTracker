@@ -126,6 +126,7 @@ fun HomeScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
                         onAddClick = { name, amount, Category -> screenModel.insertSpending(name, amount, Category) },
                         onSortClick = { sortType -> screenModel.selectSortType(sortType) },
+                        onCategoryClick = { filter -> screenModel.selectSortedCategory(filter)},
                         spendings = allSpendings.value,
                         category = allCategories.value.filter { it.isVisible.toInt() == 1 },
                         modifier = Modifier
