@@ -144,16 +144,20 @@ fun HomeScreen(
 
                 Destination.LIMITS -> {
                     LimitScreen(
-
+                        category = allCategories.value.filter { it.isVisible.toInt() == 1 }
                     )
                 }
 
                 Destination.CHARTS -> {
-                    LimitScreen()
+                    LimitScreen(
+                        category = allCategories.value.filter { it.isVisible.toInt() == 1 }
+                    )
                 }
 
                 Destination.SETTINGS -> {
-                    LimitScreen()
+                    LimitScreen(
+                        category = allCategories.value.filter { it.isVisible.toInt() == 1 }
+                    )
                 }
             }
         }

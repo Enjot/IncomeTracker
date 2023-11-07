@@ -324,6 +324,10 @@ fun SpendingScreen(
     }
 }
 
+@Composable
+fun FilterBottomSheet(){
+
+}
 
 @Composable
 fun spendingDialog(
