@@ -29,6 +29,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -227,7 +228,7 @@ fun CategoryScreen(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.surface)
-                            .padding(48.dp)
+                            .padding(40.dp)
 
                     ) {
                         Text(
@@ -240,20 +241,30 @@ fun CategoryScreen(
                             label = { Text("Nazwa") },
                             onValueChange = { name = it },
                             modifier = Modifier
-                                .padding(12.dp)
                                 .focusable()
                                 .focusRequester(focusRequester)
                         )
                         Spacer(modifier = Modifier.height(36.dp))
-                        Button(
-                            onClick = {
-                                onAddButtonClick(name)
-                                dialog = false
-                            },
-                            modifier = Modifier.align(Alignment.End)
-                        ) {
-                            Text("Dodaj")
+                        Row {
+                            TextButton(
+                                onClick = {
+                                    dialog = false
+                                }
+                            ) {
+                                Text("Anuluj")
+                            }
+                            Spacer(modifier = Modifier.width(100.dp))
+                            Button(
+                                onClick = {
+                                    onAddButtonClick(name)
+                                    dialog = false
+                                }
+                            ) {
+                                Text("Dodaj")
+                            }
                         }
+
+
                     }
 
                     LaunchedEffect(Unit) {

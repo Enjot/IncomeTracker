@@ -24,7 +24,7 @@ fun HomeScreen(
         color = MaterialTheme.colorScheme.surface, modifier = modifier
     ) {
         
-        Row() {
+        Row {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
