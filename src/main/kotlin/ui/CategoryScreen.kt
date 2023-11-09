@@ -14,8 +14,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -35,20 +35,21 @@ import androidx.compose.ui.unit.dp
 fun CategoryScreen(
     onItemClick: (String) -> Unit,
     onAddButtonClick: (String) -> Unit,
-    categories: List<MutableMap.MutableEntry<String, Pair<Int, Double>>>
+    onSortClick: (CategorySortType) -> Unit,
+    categories: List<MutableMap.MutableEntry<String, Pair<Int, Double>>>,
+    chosenSortType: CategorySortType
 ) {
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    var currentSortType by remember { mutableStateOf("od A do Z") }
     val arrowOrientation: Float by animateFloatAsState(
         targetValue = if (expanded) 180F else 0F,
         animationSpec = spring(
             stiffness = 1000f
         )
     )
-    
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -65,122 +66,93 @@ fun CategoryScreen(
                     Text(
                         text = "Zarządzaj kategoriami",
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.weight(1f).clickable{}
+                        modifier = Modifier.weight(1f).clickable {}
                     )
                     Box(
                         modifier = Modifier
                             .wrapContentSize(Alignment.BottomEnd)
                             .padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
+                        val width = 225.dp
                         Box {
                             OutlinedTextField(
-                                value = "Sortuj $currentSortType",
+                                value = chosenSortType.sortType,
                                 onValueChange = { },
                                 singleLine = true,
                                 readOnly = true,
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource("drawable/icons/sorting.svg"),
+                                        contentDescription = null
+                                    )
+                                },
                                 trailingIcon = {
                                     Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
+                                        imageVector = Icons.Rounded.ArrowDropDown,
                                         contentDescription = null,
                                         modifier = Modifier
                                             .rotate(arrowOrientation)
                                     )
                                 },
                                 modifier = Modifier
-                                    .width(250.dp)
+                                    .width(width)
 
                             )
                             Spacer(
                                 modifier = Modifier
-                                    .width(250.dp)
-                                    .height(55.dp)
+                                    .width(width)
+                                    .height(56.dp)
                                     .clickable { expanded = !expanded }
                             )
                         }
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
-                            modifier = Modifier.width(250.dp)
+                            modifier = Modifier.width(width)
                         ) {
                             DropdownMenuItem(
-                                text = { Text("od najtańszych") },
+                                text = { Text(CategorySortType.NAME_INC.sortType) },
                                 onClick = {
-                                    currentSortType = "od najtańszych"
+                                    onSortClick(CategorySortType.NAME_INC)
                                     expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("od najdroższych") },
+                                text = { Text(CategorySortType.NAME_DEC.sortType) },
                                 onClick = {
-                                    currentSortType = "od najdroższych"
+                                    onSortClick(CategorySortType.NAME_DEC)
                                     expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("od najnowszych") },
+                                text = { Text(CategorySortType.SUM_INC.sortType) },
                                 onClick = {
-                                    currentSortType = "od najnowszych"
+                                    onSortClick(CategorySortType.SUM_INC)
                                     expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("od najstarszych") },
+                                text = { Text(CategorySortType.SUM_DEC.sortType) },
                                 onClick = {
-                                    currentSortType = "od najstarszych"
+                                    onSortClick(CategorySortType.SUM_DEC)
                                     expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("od A do Z") },
+                                text = { Text(CategorySortType.AMOUNT_INC.sortType) },
                                 onClick = {
-                                    currentSortType = "od A do Z"
+                                    onSortClick(CategorySortType.AMOUNT_INC)
                                     expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("od Z do A") },
+                                text = { Text(CategorySortType.AMOUNT_DEC.sortType) },
                                 onClick = {
+                                    onSortClick(CategorySortType.AMOUNT_DEC)
+                                    expanded = false
+                                }
+                            )
 
-                                    currentSortType = "od Z do A"
-                                    expanded = false
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Outlined.Settings,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
                         }
                     }
                 }
