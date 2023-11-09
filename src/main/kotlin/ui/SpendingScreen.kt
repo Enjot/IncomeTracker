@@ -14,8 +14,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,9 +37,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun SpendingScreen(
     onItemClick: (Long) -> Unit,
-    onSortClick: (SpendingSort) -> Unit,
+    onSortClick: (SpendingSortType) -> Unit,
     onAddClick: (String, Double, Category) -> Unit,
     onCategoryClick: (String) -> Unit,
+    chosenSortType: SpendingSortType,
     category: List<Category>,
     spendings: List<Spending>,
     modifier: Modifier = Modifier
@@ -47,17 +48,9 @@ fun SpendingScreen(
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }
-    var currentSortType by remember { mutableStateOf("od A do Z") }
 
-    val arrowOrientation: Float by animateFloatAsState(
-        targetValue = if (expanded) 180F else 0F,
-        animationSpec = spring(
-            stiffness = 1000f
-        )
-    )
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -69,7 +62,6 @@ fun SpendingScreen(
     ) {
 
         Box {
-
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -86,11 +78,14 @@ fun SpendingScreen(
                     )
                     Box(
                         modifier = Modifier
-                            .wrapContentSize(Alignment.BottomEnd)
-                            .padding(vertical = 24.dp, horizontal = 36.dp)
+                            .padding(24.dp)
                     ) {
-
+                        SortPicker(
+                            onSortClick = onSortClick,
+                            value = chosenSortType.sortType,
+                        )
                     }
+
                     OutlinedButton(
                         onClick = { showBottomSheet = !showBottomSheet },
                         modifier = Modifier
@@ -98,6 +93,11 @@ fun SpendingScreen(
                             .padding(top = 24.dp, bottom = 24.dp, end = 36.dp)
                     ) {
                         Text("Filtruj")
+                        Spacer(modifier = Modifier.width(24.dp))
+                        Icon(
+                            painterResource("drawable/icons/filter.svg"),
+                            contentDescription = null
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -177,126 +177,20 @@ fun SpendingScreen(
             },
             sheetState = sheetState
         ) {
-            Box(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                OutlinedTextField(
-                    value = "Sortuj $currentSortType",
-                    onValueChange = { },
-                    singleLine = true,
-                    readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .rotate(arrowOrientation)
-                        )
-                    },
-                    modifier = Modifier
-                        .width(250.dp)
-
-                )
-                Spacer(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .height(55.dp)
-                        .clickable { expanded = !expanded }
-                )
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.width(250.dp)
-            ) {
-                DropdownMenuItem(
-                    text = { Text("od najtańszych") },
-                    onClick = {
-                        onSortClick(SpendingSort.AmountInc)
-                        currentSortType = "od najtańszych"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("od najdroższych") },
-                    onClick = {
-                        onSortClick(SpendingSort.AmountDec)
-                        currentSortType = "od najdroższych"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("od najnowszych") },
-                    onClick = {
-                        onSortClick(SpendingSort.DateInc)
-                        currentSortType = "od najnowszych"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("od najstarszych") },
-                    onClick = {
-                        onSortClick(SpendingSort.DateDec)
-                        currentSortType = "od najstarszych"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("od A do Z") },
-                    onClick = {
-                        onSortClick(SpendingSort.NameInc)
-                        currentSortType = "od A do Z"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("od Z do A") },
-                    onClick = {
-                        onSortClick(SpendingSort.NameDec)
-                        currentSortType = "od Z do A"
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = null
-                        )
-                    }
-                )
-            }
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp)
+                columns = GridCells.Adaptive(200.dp),
+                modifier = Modifier.padding(24.dp)
             ) {
+                item {
+                    Text(
+                        text = "Pokaż wszystkie",
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .clickable {
+                                onCategoryClick("")
+                            }
+                    ) 
+                }
                 items(category) {
                     Text(
                         text = it.name,
@@ -308,24 +202,40 @@ fun SpendingScreen(
                     )
                 }
             }
-            Button(
-                onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
+            Row {
+                TextButton(
+                    onClick = {
+                        onCategoryClick("")
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showBottomSheet = false
+                            }
                         }
-                    }
-                },
-                modifier = Modifier.padding(24.dp).align(Alignment.End)
-            ) {
-                Text("Ukryj")
+                    },
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Text("Wyczyść filtrowanie")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showBottomSheet = false
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Text("Gotowe")
+                }
             }
         }
     }
 }
 
 @Composable
-fun FilterBottomSheet(){
+fun FilterBottomSheet() {
 
 }
 
@@ -483,5 +393,104 @@ fun SingleSpendingItem(
             )
 
         }
+    }
+}
+
+@Composable
+fun SortPicker(
+    onSortClick: (SpendingSortType) -> Unit,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    val width = 225.dp
+    var expanded by remember { mutableStateOf(false) }
+    val arrowOrientation: Float by animateFloatAsState(
+        targetValue = if (expanded) 180F else 0F,
+        animationSpec = spring(
+            stiffness = 1000f
+        )
+    )
+
+    Box(
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = { },
+            singleLine = true,
+            readOnly = true,
+            leadingIcon = {
+                Icon(
+                    painterResource("drawable/icons/sorting.svg"),
+                    contentDescription = null
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowDropDown,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .rotate(arrowOrientation)
+                )
+            },
+            modifier = Modifier
+                .width(width)
+
+        )
+        Spacer(
+            modifier = Modifier
+                .width(width)
+                .height(56.dp)
+                .clickable { expanded = !expanded }
+        )
+    }
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier.width(width)
+    ) {
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.NAME_INC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.NAME_INC)
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.NAME_DEC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.NAME_DEC)
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.AMOUNT_INC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.AMOUNT_INC)
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.AMOUNT_DEC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.AMOUNT_DEC)
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.DATE_INC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.DATE_INC)
+                expanded = false
+            }
+        )
+        DropdownMenuItem(
+            text = { Text(SpendingSortType.AMOUNT_DEC.sortType) },
+            onClick = {
+                onSortClick(SpendingSortType.DATE_DEC)
+                expanded = false
+            }
+        )
+
     }
 }

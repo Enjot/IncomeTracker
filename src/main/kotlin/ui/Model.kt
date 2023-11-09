@@ -19,26 +19,27 @@ class HomeScreenModel(
     private val categoryQueries = database.categoryQueries
     private val spendingQueries = database.spendingQueries
 
-
-    var allSpendings = spendingQueries.selectAll()
+    private var allSpendings = spendingQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
+    var allCategories = categoryQueries.selectAll()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
+    
+    var spendingSortType: MutableStateFlow<SpendingSortType> = MutableStateFlow(SpendingSortType.NAME_INC)
+    var categorySortType: MutableStateFlow<CategorySortType> = MutableStateFlow(CategorySortType.NAME_INC)
+    
+    private var categoryFilter: MutableStateFlow<String> = MutableStateFlow("")
 
-    var spendingSort: MutableStateFlow<SpendingSort> = MutableStateFlow(SpendingSort.NameInc)
-
-    var categoryFilter: MutableStateFlow<String> = MutableStateFlow("")
-
-    var sortedSpendings = allSpendings.combine(spendingSort) { spending, sortType ->
-
+    var sortedSpendings = allSpendings.combine(spendingSortType) { spending, sortType ->
         return@combine when (sortType) {
-            SpendingSort.AmountInc -> spending.sortedBy { it.amount }
-            SpendingSort.AmountDec -> spending.sortedBy { it.amount }.reversed()
-            SpendingSort.DateInc -> spending.sortedBy { it.date }
-            SpendingSort.DateDec -> spending.sortedBy { it.date }.reversed()
-            SpendingSort.NameInc -> spending.sortedBy { it.name }
-            SpendingSort.NameDec -> spending.sortedBy { it.name }.reversed()
+            SpendingSortType.AMOUNT_INC -> spending.sortedBy { it.amount }
+            SpendingSortType.AMOUNT_DEC -> spending.sortedBy { it.amount }.reversed()
+            SpendingSortType.DATE_INC -> spending.sortedBy { it.date }
+            SpendingSortType.DATE_DEC -> spending.sortedBy { it.date }.reversed()
+            SpendingSortType.NAME_INC -> spending.sortedBy { it.name }
+            SpendingSortType.NAME_DEC -> spending.sortedBy { it.name }.reversed()
         }
-
     }.combine(categoryFilter) { spendingList, filter ->
         return@combine if (filter == "") {
             spendingList
@@ -51,16 +52,15 @@ class HomeScreenModel(
         categoryFilter.value = category
     }
 
-    fun selectSortType(type: SpendingSort) {
-        spendingSort.value = type
+    fun setSpendingSortType(type: SpendingSortType) {
+        spendingSortType.value = type
     }
 
-
-    var allCategories = categoryQueries.selectAll()
-        .asFlow()
-        .mapToList(Dispatchers.IO)
-
-    var categories = allSpendings.combine(allCategories) { spending, category ->
+    fun setCategorySortType(type: CategorySortType) {
+        categorySortType.value = type
+    }
+    
+    var sortedCategories = allSpendings.combine(allCategories) { spending, category ->
         val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
 
         spending.forEach {
@@ -77,8 +77,16 @@ class HomeScreenModel(
             if (!mapOfCategories.containsKey(it.name) && it.isVisible.toInt() == 1)
                 mapOfCategories[it.name] = Pair(0, 0.00)
         }
-
-        return@combine mapOfCategories.entries.toList().sortedBy { it.key.uppercase() }
+        return@combine mapOfCategories.entries.toList()
+    }.combine(categorySortType) {categories, sortType  ->
+        return@combine when (sortType) {
+            CategorySortType.NAME_INC -> categories.sortedBy { it.key.uppercase() }
+            CategorySortType.NAME_DEC -> categories.sortedBy { it.key.uppercase() }.reversed()
+            CategorySortType.SUM_INC -> categories.sortedBy { it.value.first }
+            CategorySortType.SUM_DEC -> categories.sortedBy { it.value.first }.reversed()
+            CategorySortType.AMOUNT_INC -> categories.sortedBy { it.value.second }
+            CategorySortType.AMOUNT_DEC -> categories.sortedBy { it.value.second }.reversed()
+        }
     }
 
 
@@ -149,6 +157,22 @@ class HomeScreenModel(
     }
 }
 
-enum class SpendingSort {
-    AmountInc, AmountDec, DateInc, DateDec, NameInc, NameDec
+enum class SpendingSortType(val sortType: String) {
+    NAME_INC("od A do Z"),
+    NAME_DEC("od Z do A"),
+    AMOUNT_INC("od najtańszych"),
+    AMOUNT_DEC("od najdroższych"),
+    DATE_INC("od najnowszych"),
+    DATE_DEC("od najstarszych"),
+
+}
+
+enum class CategorySortType(val sortType: String) {
+    // sortType names are temporary
+    NAME_INC("od A do Z"),
+    NAME_DEC("od Z do A"),
+    SUM_INC("ilość w górę"),
+    SUM_DEC("ilość w dół"),
+    AMOUNT_INC("suma w górę"),
+    AMOUNT_DEC("suma w dół"),
 }

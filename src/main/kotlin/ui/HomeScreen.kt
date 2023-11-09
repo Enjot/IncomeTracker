@@ -17,7 +17,7 @@ fun HomeScreen(
 ) {
     val allSpendings = screenModel.sortedSpendings.collectAsState(emptyList())
     val allCategories = screenModel.allCategories.collectAsState(emptyList())
-    val categories = screenModel.categories.collectAsState(emptyList())
+    val categories = screenModel.sortedCategories.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
 
     Surface(
@@ -124,9 +124,10 @@ fun HomeScreen(
                 Destination.SPENDINGS -> {
                     SpendingScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
-                        onAddClick = { name, amount, Category -> screenModel.insertSpending(name, amount, Category) },
-                        onSortClick = { sortType -> screenModel.selectSortType(sortType) },
+                        onAddClick = { name, amount, category -> screenModel.insertSpending(name, amount, category) },
+                        onSortClick = { type -> screenModel.setSpendingSortType(type) },
                         onCategoryClick = { filter -> screenModel.selectSortedCategory(filter)},
+                        chosenSortType =  screenModel.spendingSortType.value,
                         spendings = allSpendings.value,
                         category = allCategories.value.filter { it.isVisible.toInt() == 1 },
                         modifier = Modifier
@@ -138,7 +139,9 @@ fun HomeScreen(
                     CategoryScreen(
                         onItemClick = { name -> screenModel.setHiddenCategory(name) },
                         onAddButtonClick = { name -> screenModel.insertCategory(name) },
-                        categories = categories.value
+                        onSortClick = {type -> screenModel.setCategorySortType(type)},
+                        categories = categories.value,
+                        chosenSortType = screenModel.categorySortType.value
                     )
                 }
 
