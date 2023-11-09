@@ -26,12 +26,14 @@ class HomeScreenModel(
         .asFlow()
         .mapToList(Dispatchers.IO)
     
-    var spendingSortType: MutableStateFlow<SpendingSortType> = MutableStateFlow(SpendingSortType.NAME_INC)
-    var categorySortType: MutableStateFlow<CategorySortType> = MutableStateFlow(CategorySortType.NAME_INC)
+    var spendingSortType = MutableStateFlow(SpendingSortType.NAME_INC)
+    var categorySortType = MutableStateFlow(CategorySortType.NAME_INC)
     
-    private var categoryFilter: MutableStateFlow<String> = MutableStateFlow("")
+    var spendingDateFilter = MutableStateFlow(DateFilter())
+    
+    private var spendingFilterByCategory: MutableStateFlow<String> = MutableStateFlow("")
 
-    var sortedSpendings = allSpendings.combine(spendingSortType) { spending, sortType ->
+    var sortedFilteredSpendings = allSpendings.combine(spendingSortType) { spending, sortType ->
         return@combine when (sortType) {
             SpendingSortType.AMOUNT_INC -> spending.sortedBy { it.amount }
             SpendingSortType.AMOUNT_DEC -> spending.sortedBy { it.amount }.reversed()
@@ -40,16 +42,21 @@ class HomeScreenModel(
             SpendingSortType.NAME_INC -> spending.sortedBy { it.name }
             SpendingSortType.NAME_DEC -> spending.sortedBy { it.name }.reversed()
         }
-    }.combine(categoryFilter) { spendingList, filter ->
+    }.combine(spendingFilterByCategory) { spendings, filter ->
         return@combine if (filter == "") {
-            spendingList
+            spendings
         } else {
-            spendingList.filter { spending -> spending.category == filter }
+            spendings.filter { spending -> spending.category == filter }
         }
+    }.combine(spendingDateFilter) { spendings, filter ->
+        return@combine if (filter.isFiltered) {
+            spendings.filter { it.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}") }
+        }
+        else spendings
     }
 
     fun selectSortedCategory(category: String) {
-        categoryFilter.value = category
+        spendingFilterByCategory.value = category
     }
 
     fun setSpendingSortType(type: SpendingSortType) {
@@ -106,10 +113,18 @@ class HomeScreenModel(
             }
         }
     }
+    
+    fun setDateFilter(month: Int, year: Int, isFiltered: Boolean ) {
+        spendingDateFilter.value = DateFilter(month, year, isFiltered)
+    }
 
+    
+    fun resetDateFilter() {
+        spendingDateFilter.value = DateFilter()
+    }
+    
     fun setHiddenCategory(name: String) = categoryQueries.setHidden(name)
-
-
+    
     init {
 
         // temporary init categories to test functionality
@@ -138,7 +153,7 @@ class HomeScreenModel(
         insertCategory("Mieszkanie")
         insertCategory("Zdrowie")
 
-        // temporary init spendings to test functionality
+//         temporary init spendings to test functionality
 //        insertSpending("Buty", 170.0, Category("Moda", 0))
 //        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 0))
 //        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 0))
@@ -156,6 +171,7 @@ class HomeScreenModel(
 
     }
 }
+
 
 enum class SpendingSortType(val sortType: String) {
     NAME_INC("od A do Z"),
@@ -176,3 +192,24 @@ enum class CategorySortType(val sortType: String) {
     AMOUNT_INC("suma w górę"),
     AMOUNT_DEC("suma w dół"),
 }
+
+data class DateFilter(
+    var selectedMonth: Int = LocalDate.now().month.value,
+    var selectedYear: Int = LocalDate.now().year,
+    var isFiltered: Boolean = false,
+
+    val monthNames: List<String> = listOf(
+        "Styczeń",
+        "Luty",
+        "Marzec",
+        "Kwiecień",
+        "Maj",
+        "Czerwiec",
+        "Lipiec",
+        "Sierpień",
+        "Wrzesień",
+        "Październik",
+        "Listopad",
+        "Grudzień"
+    )
+)

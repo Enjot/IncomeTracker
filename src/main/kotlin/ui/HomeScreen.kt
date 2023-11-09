@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ui.spendingscreen.SpendingScreen
 
 // root composable function
 
@@ -15,15 +16,16 @@ import androidx.compose.ui.unit.dp
 fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
-    val allSpendings = screenModel.sortedSpendings.collectAsState(emptyList())
+    val sortedFilteredSpendingsState = screenModel.sortedFilteredSpendings.collectAsState(emptyList())
     val allCategories = screenModel.allCategories.collectAsState(emptyList())
-    val categories = screenModel.sortedCategories.collectAsState(emptyList())
+    val sortedCategoriesState = screenModel.sortedCategories.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
-
+    val dateFilter = screenModel.spendingDateFilter.collectAsState()
+    
     Surface(
         color = MaterialTheme.colorScheme.surface, modifier = modifier
     ) {
-        
+
         Row() {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -45,7 +47,7 @@ fun HomeScreen(
                                 painterResource("drawable/icons/spending.svg")
                             },
                             contentDescription = null,
-                            )
+                        )
                     },
                     modifier = Modifier
                         .padding(vertical = 12.dp)
@@ -119,28 +121,37 @@ fun HomeScreen(
                         .padding(vertical = 12.dp)
                 )
             }
-            
+
             when (currentDestination) {
                 Destination.SPENDINGS -> {
                     SpendingScreen(
                         onItemClick = { id -> screenModel.deleteSpending(id) },
                         onAddClick = { name, amount, category -> screenModel.insertSpending(name, amount, category) },
                         onSortClick = { type -> screenModel.setSpendingSortType(type) },
-                        onCategoryClick = { filter -> screenModel.selectSortedCategory(filter)},
-                        chosenSortType =  screenModel.spendingSortType.value,
-                        spendings = allSpendings.value,
-                        category = allCategories.value.filter { it.isVisible.toInt() == 1 },
+                        onCategoryClick = { filter -> screenModel.selectSortedCategory(filter) },
+                        onResetDateFilter = { screenModel.resetDateFilter() },
+                        setDateFilter = { month, year, isFiltered ->
+                            screenModel.setDateFilter(
+                                month,
+                                year,
+                                isFiltered
+                            )
+                        },
+                        chosenSortType = screenModel.spendingSortType.value,
+                        spendings = sortedFilteredSpendingsState.value,
+                        dateFilter = dateFilter.value,
+                        categories = allCategories.value.filter { it.isVisible.toInt() == 1 },
                         modifier = Modifier
                             .fillMaxSize()
                     )
                 }
-                
+
                 Destination.CATEGORIES -> {
                     CategoryScreen(
                         onItemClick = { name -> screenModel.setHiddenCategory(name) },
                         onAddButtonClick = { name -> screenModel.insertCategory(name) },
-                        onSortClick = {type -> screenModel.setCategorySortType(type)},
-                        categories = categories.value,
+                        onSortClick = { type -> screenModel.setCategorySortType(type) },
+                        categories = sortedCategoriesState.value,
                         chosenSortType = screenModel.categorySortType.value
                     )
                 }
