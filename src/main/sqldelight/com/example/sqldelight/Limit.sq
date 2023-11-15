@@ -4,3 +4,12 @@ CREATE TABLE categoryLimit (
     date TEXT NOT NULL,
     limitAmount REAL NOT NULL
 );
+
+selectAll:
+SELECT *
+FROM categoryLimit
+ORDER BY date;
+
+insert:
+INSERT INTO categoryLimit(category, date, limitAmount)
+VALUES (?,?,?);

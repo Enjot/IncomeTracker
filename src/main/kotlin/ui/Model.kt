@@ -6,10 +6,13 @@ import app.cash.sqldelight.db.SqlDriver
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.Database
 import com.example.sqldelight.Category
+import com.example.sqldelight.Spending
+import jdk.jfr.DataAmount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
+import java.time.YearMonth
 
 class HomeScreenModel(
     driver: SqlDriver
@@ -18,6 +21,7 @@ class HomeScreenModel(
     private val database = Database(driver)
     private val categoryQueries = database.categoryQueries
     private val spendingQueries = database.spendingQueries
+    private val limitQueries = database.limitQueries
 
     private var allSpendings = spendingQueries.selectAll()
         .asFlow()
@@ -25,11 +29,15 @@ class HomeScreenModel(
     var allCategories = categoryQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
+    var allLimits = limitQueries.selectAll()
+        .asFlow()
+        .mapToList(Dispatchers.IO)
     
     var spendingSortType = MutableStateFlow(SpendingSortType.NAME_INC)
     var categorySortType = MutableStateFlow(CategorySortType.NAME_INC)
     
     var spendingDateFilter = MutableStateFlow(DateFilter())
+    var limitDateFilter = MutableStateFlow(DateFilter(10,2023,true))
     
     private var spendingFilterByCategory: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -96,6 +104,30 @@ class HomeScreenModel(
         }
     }
 
+    var currentLimits = combine(allSpendings, allLimits, limitDateFilter){ spending, limit, filter ->
+        val listOfCurrentLimits: MutableList<CurrentLimit> = mutableListOf()
+
+        val filteredSpendings =
+            spending.filter { it.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}") }
+        val filteredLimits =
+            limit.filter { it.date == ("${filter.selectedYear}-${filter.selectedMonth}") }
+
+        for (i in filteredLimits.indices){
+            var currentAmount = 0.0
+            val currentLimit = limit[i]
+            filteredSpendings.forEach{
+                if (it.category == currentLimit.category){
+                    currentAmount += it.amount
+                }
+            }
+            listOfCurrentLimits.add(CurrentLimit(
+                currentLimit.category,currentLimit.date, currentAmount, currentLimit.limitAmount)
+            )
+        }
+
+        return@combine listOfCurrentLimits
+    }
+
 
     fun insertSpending(name: String, amount: Double, category: Category) =
         spendingQueries.insert(name, amount, LocalDate.now().toString(), category.name)
@@ -113,9 +145,16 @@ class HomeScreenModel(
             }
         }
     }
+
+    fun insertLimit(category: Category, amount: Double) =
+        limitQueries.insert(category.name, YearMonth.from(LocalDate.now()).toString(), amount)
     
     fun setDateFilter(month: Int, year: Int, isFiltered: Boolean ) {
         spendingDateFilter.value = DateFilter(month, year, isFiltered)
+    }
+
+    fun setLimitDateFilter(month: Int, year: Int){
+        limitDateFilter.value = DateFilter(month, year, true)
     }
 
     
@@ -140,8 +179,6 @@ class HomeScreenModel(
         insertCategory("Karma")
         insertCategory("Dom i ogród")
         insertCategory("Utrzymanie auta")
-        insertCategory("Alkohol")
-        insertCategory("Papierosy")
         insertCategory("Gry komputerowe")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
@@ -154,21 +191,23 @@ class HomeScreenModel(
         insertCategory("Zdrowie")
 
 //         temporary init spendings to test functionality
-//        insertSpending("Buty", 170.0, Category("Moda", 0))
-//        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 0))
-//        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 0))
-//        insertSpending("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 0))
-//        insertSpending("Kindle Paperwhite 5", 550.0, Category("Elektronika", 0))
-//        insertSpending("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 0))
-//        insertSpending("Tesla", 864.0, Category("Akcje giełdowe", 0))
-//        insertSpending("Mieszkanie", 2700.0, Category("Mieszkanie", 0))
-//        insertSpending("4pak piwa", 14.0, Category("Alkohol", 0))
-//        insertSpending("Netflix", 56.0, Category("Subskrybcje", 0))
-//        insertSpending("Tidal", 19.99, Category("Subskrybcje", 0))
-//        insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 0))
-//        insertSpending("Uber", 23.0, Category("Transport", 0))
-//        insertSpending("Bolt", 19.0, Category("Transport", 0))
+        insertSpending("Buty", 170.0, Category("Moda", 0))
+        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 0))
+        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 0))
+        insertSpending("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 0))
+        insertSpending("Kindle Paperwhite 5", 550.0, Category("Elektronika", 0))
+        insertSpending("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 0))
+        insertSpending("Tesla", 864.0, Category("Akcje giełdowe", 0))
+        insertSpending("Mieszkanie", 2700.0, Category("Mieszkanie", 0))
+        insertSpending("Netflix", 56.0, Category("Subskrybcje", 0))
+        insertSpending("Tidal", 19.99, Category("Subskrybcje", 0))
+        insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 0))
+        insertSpending("Uber", 23.0, Category("Transport", 0))
+        insertSpending("Bolt", 19.0, Category("Transport", 0))
 
+        insertLimit(Category("Subskrybcje", 0),100.0)
+        insertLimit( Category("Elektronika", 0), 300.0)
+        insertLimit(Category("Transport", 0), 200.0)
     }
 }
 
@@ -192,6 +231,12 @@ enum class CategorySortType(val sortType: String) {
     AMOUNT_INC("suma w górę"),
     AMOUNT_DEC("suma w dół"),
 }
+data class CurrentLimit(
+    var categoryName: String,
+    var currentDate: String,
+    var currentAmount: Double,
+    var limitAmount: Double
+)
 
 data class DateFilter(
     var selectedMonth: Int = LocalDate.now().month.value,

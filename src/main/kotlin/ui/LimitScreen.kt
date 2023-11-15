@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,36 +18,75 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
+import ui.spendingscreen.DateFilterSelector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LimitScreen(
-    category: List<Category>
+    onAddButtonClick: (Category, Double) -> Unit,
+    setLimitDateFilter: (Int, Int) -> Unit,
+    category: List<Category>,
+    limit: List<CurrentLimit>,
+    dateFilter: DateFilter
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
 
     ) {
 
+//        var showScrollbar by remember { mutableStateOf(false) }
         val stateVertical = rememberLazyGridState()
         var dialog by remember { mutableStateOf(false) }
+        var selectedMonth by remember { mutableStateOf(dateFilter.selectedMonth) }
+        var selectedYear by remember { mutableStateOf(dateFilter.selectedYear) }
 
         Box {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ){
-                Text(
-                    text = "Zarządzaj Limitami",
-                    style = MaterialTheme.typography.displayLarge,
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .weight(1f)
-                        .clickable { }
-                )
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Zarządzaj Limitami",
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { }
+                    )
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        DateFilterSelector(
+                            monthsNames = dateFilter.monthNames,
+                            selectedMonth = selectedMonth,
+                            selectedYear = selectedYear,
+                            onYearSelect = {
+                                selectedYear = it.toInt()
+                                setLimitDateFilter(selectedMonth, selectedYear)
+                            },
+                            onMonthSelect = {
+                                selectedMonth = it.toInt()
+                                setLimitDateFilter(selectedMonth, selectedYear)
+                            }
+                        )
+                    }
+
+                }
+                Box {
+                    LazyColumn {
+                        items(limit) {
+                            SingleLimitCard(it)
+                        }
+                    }
+                }
             }
             ExtendedFloatingActionButton(
                 text = { Text("Ustal limit") },
@@ -61,6 +102,28 @@ fun LimitScreen(
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
             )
+//            AnimatedVisibility(
+//                visible = showScrollbar,
+//                enter = fadeIn(),
+//                exit = fadeOut(),
+//                modifier = Modifier
+//                    .align(Alignment.CenterEnd)
+//            ) {
+//                VerticalScrollbar(
+//                    adapter = rememberScrollbarAdapter(stateVertical),
+//                    style = ScrollbarStyle(
+//                        minimalHeight = 16.dp,
+//                        thickness = 8.dp,
+//                        shape = RoundedCornerShape(4.dp),
+//                        hoverDurationMillis = 300,
+//                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+//                        hoverColor = MaterialTheme.colorScheme.outline
+//                    ),
+//                    modifier = Modifier
+//                        .padding(vertical = 8.dp)
+//                        .wrapContentHeight()
+//                )
+//            }
 
             if (dialog) {
                 AlertDialog(
@@ -73,7 +136,11 @@ fun LimitScreen(
                         .padding(vertical = 24.dp)
                         .clip(RoundedCornerShape(24.dp))
                 ) {
-                    LimitDialog({ dialog = !dialog }, category)
+                    LimitDialog(
+                        onAddButtonClick,
+                        { dialog = !dialog },
+                        category
+                    )
                 }
             }
         }
@@ -81,7 +148,83 @@ fun LimitScreen(
 }
 
 @Composable
+fun SingleLimitCard(
+    item: CurrentLimit
+) {
+
+    val ratio = (item.currentAmount / item.limitAmount).toFloat()
+    val progressColor = when{
+        ratio < 0.5f -> MaterialTheme.colorScheme.secondary
+        ratio > 0.5f && ratio < 0.9f -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.error
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+    ) {
+        Column {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = item.categoryName,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = item.currentDate,
+                    fontWeight = FontWeight.Medium,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row {
+                LinearProgressIndicator(
+                    color = progressColor,
+                    progress = ratio,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .padding(start = 12.dp, end = 12.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            Brush.radialGradient(
+                            listOf(Color(0xFF2be4dc), Color(0xFF243484))
+                        ))
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "%.2f zł".format(item.currentAmount),
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    text = "%.2f zł".format(item.limitAmount),
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
 fun LimitDialog(
+    onAddButtonClick: (Category, Double) -> Unit,
     onCloseDialog: () -> Unit,
     category: List<Category>
 ) {
@@ -89,6 +232,7 @@ fun LimitDialog(
     var amount by remember { mutableStateOf("") }
     var categoryName by remember { mutableStateOf("Wybierz kategorię") }
     var chosenCategory by remember { mutableStateOf(0) }
+
 
     Row {
         Column(
@@ -130,7 +274,10 @@ fun LimitDialog(
             )
             Button(
                 onClick = {
-                    run{ onCloseDialog() }
+                    run {
+                        onAddButtonClick(category[chosenCategory], amount.toDouble())
+                        onCloseDialog()
+                    }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
