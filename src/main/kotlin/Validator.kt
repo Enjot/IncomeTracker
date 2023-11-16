@@ -1,6 +1,6 @@
 object Validator {
 
-    fun amountOfMoney(enteredValue: String): Boolean {
+    fun isValidAmount(enteredValue: String): Boolean {
         return try {
             enteredValue.toDouble()
             true
@@ -8,16 +8,6 @@ object Validator {
             false
         }
     }
-
-    fun quantityOf(enteredValue: String): Boolean {
-        return try {
-            enteredValue.toInt()
-            true
-        } catch (_: Exception) {
-            false
-        }
-    }
-    
     
 }
 

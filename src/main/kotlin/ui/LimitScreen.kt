@@ -279,7 +279,7 @@ fun LimitDialog(
             Button(
                 onClick = {
                     isError = false
-                    if (Validator.amountOfMoney(amount)) {
+                    if(Validator.isValidAmount(amount)) {
                         onAddButtonClick(category[chosenCategory], amount.toDouble())
                         onCloseDialog()
                     } else isError = true
