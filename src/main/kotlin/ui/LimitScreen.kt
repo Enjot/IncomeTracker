@@ -1,25 +1,29 @@
 package ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,7 +31,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
 import ui.spendingscreen.DateFilterSelector
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun LimitScreen(
     onAddButtonClick: (Category, Double) -> Unit,
@@ -36,17 +40,18 @@ fun LimitScreen(
     limit: List<CurrentLimit>,
     dateFilter: DateFilter
 ) {
+
+    var showScrollbar by remember { mutableStateOf(false) }
+    val stateVertical = rememberLazyListState()
+    var dialog by remember { mutableStateOf(false) }
+    var selectedMonth by remember { mutableStateOf(dateFilter.selectedMonth) }
+    var selectedYear by remember { mutableStateOf(dateFilter.selectedYear) }
     Surface(
-        modifier = Modifier.fillMaxSize()
-
+        modifier = Modifier
+            .fillMaxSize()
+            .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
+            .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
-
-//        var showScrollbar by remember { mutableStateOf(false) }
-        val stateVertical = rememberLazyGridState()
-        var dialog by remember { mutableStateOf(false) }
-        var selectedMonth by remember { mutableStateOf(dateFilter.selectedMonth) }
-        var selectedYear by remember { mutableStateOf(dateFilter.selectedYear) }
-
         Box {
             Column {
                 Row(
@@ -80,13 +85,17 @@ fun LimitScreen(
                     }
 
                 }
-                Box {
-                    LazyColumn {
-                        items(limit) {
-                            SingleLimitCard(it)
-                        }
+                LazyColumn(
+                    state = stateVertical,
+                    modifier = Modifier
+                        .padding(horizontal = 96.dp)
+                ) {
+                    items(limit) {
+                        SingleLimitCard(it)
                     }
+                    item { Spacer(modifier = Modifier.height(128.dp)) }
                 }
+
             }
             ExtendedFloatingActionButton(
                 text = { Text("Ustal limit") },
@@ -102,28 +111,28 @@ fun LimitScreen(
                     .align(Alignment.BottomEnd)
                     .padding(48.dp)
             )
-//            AnimatedVisibility(
-//                visible = showScrollbar,
-//                enter = fadeIn(),
-//                exit = fadeOut(),
-//                modifier = Modifier
-//                    .align(Alignment.CenterEnd)
-//            ) {
-//                VerticalScrollbar(
-//                    adapter = rememberScrollbarAdapter(stateVertical),
-//                    style = ScrollbarStyle(
-//                        minimalHeight = 16.dp,
-//                        thickness = 8.dp,
-//                        shape = RoundedCornerShape(4.dp),
-//                        hoverDurationMillis = 300,
-//                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
-//                        hoverColor = MaterialTheme.colorScheme.outline
-//                    ),
-//                    modifier = Modifier
-//                        .padding(vertical = 8.dp)
-//                        .wrapContentHeight()
-//                )
-//            }
+            AnimatedVisibility(
+                visible = showScrollbar,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+            ) {
+                VerticalScrollbar(
+                    adapter = rememberScrollbarAdapter(stateVertical),
+                    style = ScrollbarStyle(
+                        minimalHeight = 16.dp,
+                        thickness = 8.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        hoverDurationMillis = 300,
+                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
+                        hoverColor = MaterialTheme.colorScheme.outline
+                    ),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .wrapContentHeight()
+                )
+            }
 
             if (dialog) {
                 AlertDialog(
@@ -153,7 +162,7 @@ fun SingleLimitCard(
 ) {
 
     val ratio = (item.currentAmount / item.limitAmount).toFloat()
-    val progressColor = when{
+    val progressColor = when {
         ratio < 0.5f -> MaterialTheme.colorScheme.secondary
         ratio > 0.5f && ratio < 0.9f -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.error
@@ -195,8 +204,9 @@ fun SingleLimitCard(
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             Brush.radialGradient(
-                            listOf(Color(0xFF2be4dc), Color(0xFF243484))
-                        ))
+                                listOf(Color(0xFF2be4dc), Color(0xFF243484))
+                            )
+                        )
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))

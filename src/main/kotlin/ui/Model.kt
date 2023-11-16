@@ -6,8 +6,6 @@ import app.cash.sqldelight.db.SqlDriver
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.Database
 import com.example.sqldelight.Category
-import com.example.sqldelight.Spending
-import jdk.jfr.DataAmount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,7 +35,7 @@ class HomeScreenModel(
     var categorySortType = MutableStateFlow(CategorySortType.NAME_INC)
     
     var spendingDateFilter = MutableStateFlow(DateFilter())
-    var limitDateFilter = MutableStateFlow(DateFilter(10,2023,true))
+    var limitDateFilter = MutableStateFlow(DateFilter())
     
     private var spendingFilterByCategory: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -256,5 +254,6 @@ data class DateFilter(
         "Październik",
         "Listopad",
         "Grudzień"
-    )
+    ),
+    val years: IntRange = 1950..2100
 )
