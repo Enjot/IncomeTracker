@@ -31,3 +31,6 @@ FROM category
 WHERE category.name = ?
 LIMIT 1
 );
+
+deleteAll:
+DELETE FROM category;

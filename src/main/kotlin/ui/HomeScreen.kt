@@ -134,7 +134,7 @@ fun HomeScreen(
                         onCategoryClick = { filter -> screenModel.selectSortedCategory(filter) },
                         onResetDateFilter = { screenModel.resetDateFilter() },
                         setDateFilter = { month, year, isFiltered ->
-                            screenModel.setDateFilter(
+                            screenModel.setSpendingDateFilter(
                                 month,
                                 year,
                                 isFiltered
@@ -175,11 +175,11 @@ fun HomeScreen(
                 }
 
                 Destination.CHARTS -> {
-
+                    Surface(modifier = Modifier.fillMaxSize()) {  }
                 }
 
                 Destination.SETTINGS -> {
-
+                    Surface(modifier = Modifier.fillMaxSize()) {  }
                 }
             }
         }

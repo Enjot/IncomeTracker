@@ -26,3 +26,6 @@ VALUES (?,?,?,?);
 delete:
 DELETE FROM spending
 WHERE id = ?;
+
+deleteAll:
+DELETE FROM spending;

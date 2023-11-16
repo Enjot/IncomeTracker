@@ -21,8 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
@@ -163,11 +161,9 @@ fun SingleLimitCard(
 ) {
 
     val ratio = (item.currentAmount / item.limitAmount).toFloat()
-    val progressColor = when {
-        ratio < 0.5f -> MaterialTheme.colorScheme.secondary
-        ratio > 0.5f && ratio < 0.9f -> MaterialTheme.colorScheme.primary
-        else -> MaterialTheme.colorScheme.error
-    }
+    val progressColor =
+        if (ratio < 0.9f) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.error
 
     Box(
         modifier = Modifier
@@ -203,11 +199,6 @@ fun SingleLimitCard(
                         .height(8.dp)
                         .padding(start = 12.dp, end = 12.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            Brush.radialGradient(
-                                listOf(Color(0xFF2be4dc), Color(0xFF243484))
-                            )
-                        )
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))

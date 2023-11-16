@@ -23,6 +23,7 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
     
+    
     // JSystem Theme Detector
     implementation ("com.github.Dansoftowner:jSystemThemeDetector:3.8")
     

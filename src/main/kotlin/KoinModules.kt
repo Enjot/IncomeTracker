@@ -7,8 +7,8 @@ import ui.HomeScreenModel
 import java.io.File
 
 val homeModule = module {
-    val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:test.db")
-    if (!File("test.db").exists()) {
+    val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:database.db")
+    if (!File("database.db").exists()) {
         Database.Schema.create(driver)
     }
     factory { HomeScreenModel(driver) }

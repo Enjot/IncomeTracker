@@ -1,4 +1,4 @@
-CREATE TABLE categoryLimit (
+CREATE TABLE limitOfCategory (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     category TEXT NOT NULL,
     date TEXT NOT NULL,
@@ -7,9 +7,12 @@ CREATE TABLE categoryLimit (
 
 selectAll:
 SELECT *
-FROM categoryLimit
+FROM limitOfCategory
 ORDER BY date;
 
 insert:
-INSERT INTO categoryLimit(category, date, limitAmount)
+INSERT INTO limitOfCategory(category, date, limitAmount)
 VALUES (?,?,?);
+
+deleteAll:
+DELETE FROM limitOfCategory;

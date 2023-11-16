@@ -30,13 +30,13 @@ class HomeScreenModel(
     var allLimits = limitQueries.selectAll()
         .asFlow()
         .mapToList(Dispatchers.IO)
-    
+
     var spendingSortType = MutableStateFlow(SpendingSortType.NAME_INC)
     var categorySortType = MutableStateFlow(CategorySortType.NAME_INC)
-    
+
     var spendingDateFilter = MutableStateFlow(DateFilter())
     var limitDateFilter = MutableStateFlow(DateFilter())
-    
+
     private var spendingFilterByCategory: MutableStateFlow<String> = MutableStateFlow("")
 
     var sortedFilteredSpendings = allSpendings.combine(spendingSortType) { spending, sortType ->
@@ -57,8 +57,7 @@ class HomeScreenModel(
     }.combine(spendingDateFilter) { spendings, filter ->
         return@combine if (filter.isFiltered) {
             spendings.filter { it.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}") }
-        }
-        else spendings
+        } else spendings
     }
 
     fun selectSortedCategory(category: String) {
@@ -72,7 +71,7 @@ class HomeScreenModel(
     fun setCategorySortType(type: CategorySortType) {
         categorySortType.value = type
     }
-    
+
     var sortedCategories = allSpendings.combine(allCategories) { spending, category ->
         val mapOfCategories: MutableMap<String, Pair<Int, Double>> = mutableMapOf()
 
@@ -91,7 +90,7 @@ class HomeScreenModel(
                 mapOfCategories[it.name] = Pair(0, 0.00)
         }
         return@combine mapOfCategories.entries.toList()
-    }.combine(categorySortType) {categories, sortType  ->
+    }.combine(categorySortType) { categories, sortType ->
         return@combine when (sortType) {
             CategorySortType.NAME_INC -> categories.sortedBy { it.key.uppercase() }
             CategorySortType.NAME_DEC -> categories.sortedBy { it.key.uppercase() }.reversed()
@@ -101,34 +100,47 @@ class HomeScreenModel(
             CategorySortType.AMOUNT_DEC -> categories.sortedBy { it.value.second }.reversed()
         }
     }
-
-    var currentLimits = combine(allSpendings, allLimits, limitDateFilter){ spending, limit, filter ->
+    
+    
+    var currentLimits = combine(allSpendings, allLimits, limitDateFilter) { spendings, limits, filter ->
         val listOfCurrentLimits: MutableList<CurrentLimit> = mutableListOf()
 
-        val filteredSpendings =
-            spending.filter { it.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}") }
-        val filteredLimits =
-            limit.filter { it.date == ("${filter.selectedYear}-${filter.selectedMonth}") }
-
-        for (i in filteredLimits.indices){
+        limits.forEach { limit ->
             var currentAmount = 0.0
-            val currentLimit = limit[i]
-            filteredSpendings.forEach{
-                if (it.category == currentLimit.category){
-                    currentAmount += it.amount
+            spendings.forEach { spending ->
+                if (spending.category == limit.category && spending.date.startsWith(limit.date)) {
+                    currentAmount += spending.amount
                 }
             }
-            listOfCurrentLimits.add(CurrentLimit(
-                currentLimit.category,currentLimit.date, currentAmount, currentLimit.limitAmount)
+            listOfCurrentLimits.add(
+                CurrentLimit(
+                    limit.category, limit.date, currentAmount, limit.limitAmount
+                )
             )
         }
-
-        return@combine listOfCurrentLimits
+        return@combine when (filter.isFiltered) {
+            false -> listOfCurrentLimits
+            true -> listOfCurrentLimits.filter { currentLimit ->
+                when (filter.selectedMonth) {
+                    0 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-00") }
+                    1 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-01") }
+                    2 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-02") }
+                    3 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-03") }
+                    4 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-04") }
+                    5 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-05") }
+                    6 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-06") }
+                    7 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-07") }
+                    8 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-08") }
+                    9 -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-09") }
+                    else -> { currentLimit.currentDate.startsWith("${filter.selectedYear}-${filter.selectedMonth}") }
+                }
+            }
+        }
     }
 
 
-    fun insertSpending(name: String, amount: Double, category: Category) =
-        spendingQueries.insert(name, amount, LocalDate.now().toString(), category.name)
+    fun insertSpending(name: String, amount: Double, category: Category, date: String = LocalDate.now().toString()) =
+        spendingQueries.insert(name, amount, date, category.name)
 
     fun deleteSpending(id: Long) = spendingQueries.delete(id)
 
@@ -144,27 +156,27 @@ class HomeScreenModel(
         }
     }
 
-    fun insertLimit(category: Category, amount: Double) =
-        limitQueries.insert(category.name, YearMonth.from(LocalDate.now()).toString(), amount)
-    
-    fun setDateFilter(month: Int, year: Int, isFiltered: Boolean ) {
+    fun insertLimit(category: Category, amount: Double, date: String = YearMonth.from(LocalDate.now()).toString()) =
+        limitQueries.insert(category.name, date, amount)
+
+    fun setSpendingDateFilter(month: Int, year: Int, isFiltered: Boolean) {
         spendingDateFilter.value = DateFilter(month, year, isFiltered)
     }
 
-    fun setLimitDateFilter(month: Int, year: Int){
-        limitDateFilter.value = DateFilter(month, year, true)
+    fun setLimitDateFilter(month: Int, year: Int, isFiltered: Boolean = true) {
+        limitDateFilter.value = DateFilter(month, year, isFiltered)
     }
-
     
     fun resetDateFilter() {
         spendingDateFilter.value = DateFilter()
     }
-    
-    fun setHiddenCategory(name: String) = categoryQueries.setHidden(name)
-    
-    init {
 
-        // temporary init categories to test functionality
+    fun setHiddenCategory(name: String) = categoryQueries.setHidden(name)
+
+    init {
+        spendingQueries.deleteAll()
+        categoryQueries.deleteAll()
+        limitQueries.deleteAll()
         insertCategory("Produkty spożywcze")
         insertCategory("Transport")
         insertCategory("Rachunki")
@@ -176,8 +188,10 @@ class HomeScreenModel(
         insertCategory("Uroda")
         insertCategory("Karma")
         insertCategory("Dom i ogród")
+        insertCategory("Fast foody")
         insertCategory("Utrzymanie auta")
         insertCategory("Gry komputerowe")
+        insertCategory("Gry planszowe")
         insertCategory("Remonty")
         insertCategory("Mieszkanie")
         insertCategory("Części do komputera")
@@ -185,27 +199,38 @@ class HomeScreenModel(
         insertCategory("Czesne")
         insertCategory("Chemia")
         insertCategory("Remonty")
+        insertCategory("Płyty CD")
         insertCategory("Mieszkanie")
         insertCategory("Zdrowie")
-
-//         temporary init spendings to test functionality
-        insertSpending("Buty", 170.0, Category("Moda", 0))
-        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 0))
-        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 0))
-        insertSpending("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 0))
-        insertSpending("Kindle Paperwhite 5", 550.0, Category("Elektronika", 0))
-        insertSpending("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 0))
-        insertSpending("Tesla", 864.0, Category("Akcje giełdowe", 0))
-        insertSpending("Mieszkanie", 2700.0, Category("Mieszkanie", 0))
-        insertSpending("Netflix", 56.0, Category("Subskrybcje", 0))
-        insertSpending("Tidal", 19.99, Category("Subskrybcje", 0))
-        insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 0))
-        insertSpending("Uber", 23.0, Category("Transport", 0))
-        insertSpending("Bolt", 19.0, Category("Transport", 0))
-
-        insertLimit(Category("Subskrybcje", 0),100.0)
-        insertLimit( Category("Elektronika", 0), 300.0)
-        insertLimit(Category("Transport", 0), 200.0)
+        insertSpending("Buty", 170.0, Category("Moda", 1), "2023-11-16")
+        insertSpending("Pasta do zębów", 170.0, Category("Zdrowie", 1), "2023-11-20")
+        insertSpending("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 1), "2023-07-16")
+        insertSpending("Red Dead Redemption 2", 149.0, Category("Gry komputerowe", 1), "2023-08-15")
+        insertSpending("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 1), "2023-07-16")
+        insertSpending("Kindle Paperwhite 5", 550.0, Category("Elektronika", 1), "2023-07-16")
+        insertSpending("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 1), "2023-11-05")
+        insertSpending("Tesla", 864.0, Category("Akcje giełdowe", 1), "2023-10-05")
+        insertSpending("Mieszkanie", 2700.0, Category("Mieszkanie", 1), "2023-10-01")
+        insertSpending("Netflix", 56.0, Category("Subskrybcje", 1), "2023-08-25")
+        insertSpending("Tidal", 30.0, Category("Subskrybcje", 1), "2023-11-01")
+        insertSpending("Spotify", 20.0, Category("Subskrybcje", 1), "2023-10-01")
+        insertSpending("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 1), "2023-09-17")
+        insertSpending("Uber", 23.0, Category("Transport", 1), "2023-09-21")
+        insertSpending("Bolt", 19.0, Category("Transport", 1), "2023-09-22")
+        insertSpending("RP Points", 100.0, Category("Gry komputerowe", 1), "2023-11-13")
+        insertSpending("Elmex", 11.0, Category("Uroda", 1), "2023-11-03")
+        insertSpending("Rutinoscorbin", 9.0, Category("Leki", 1), "2023-11-11")
+        insertSpending("Eurobiznes", 49.0, Category("Gry planszowe", 1), "2023-09-12")
+        insertSpending("Kendrick Lamar - Mr. Morale & the Big Steppers", 53.0, Category("Płyty CD", 1), "2023-08-22")
+        insertSpending("J. Cole - The Off-Season", 113.0, Category("Płyty CD", 1), "2023-09-30")
+        insertSpending("Eminem - Kamikaze", 78.0, Category("Płyty CD", 1), "2023-09-01")
+        insertLimit(Category("Subskrybcje", 1), 100.0, "2023-11")
+        insertLimit(Category("Subskrybcje", 1), 50.0, "2023-10")
+        insertLimit(Category("Elektronika", 1), 300.0, "2023-11")
+        insertLimit(Category("Transport", 1), 200.0, "2023-11")
+        insertLimit(Category("Gry komputerowe", 1), 300.0, "2023-09")
+        insertLimit(Category("Płyty CD", 1), 250.0, "2023-09")
+        insertLimit(Category("Części do komputera", 1), 7000.0, "2023-07")
     }
 }
 
@@ -229,6 +254,7 @@ enum class CategorySortType(val sortType: String) {
     AMOUNT_INC("suma w górę"),
     AMOUNT_DEC("suma w dół"),
 }
+
 data class CurrentLimit(
     var categoryName: String,
     var currentDate: String,
