@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
-import ui.spendingscreen.DateFilterSelector
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -43,8 +42,6 @@ fun LimitScreen(
     var showScrollbar by remember { mutableStateOf(false) }
     val stateVertical = rememberLazyListState()
     var dialog by remember { mutableStateOf(false) }
-    var selectedMonth by remember { mutableStateOf(dateFilter.selectedMonth) }
-    var selectedYear by remember { mutableStateOf(dateFilter.selectedYear) }
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -55,39 +52,28 @@ fun LimitScreen(
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "Zarządzaj Limitami",
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { }
+                        modifier = Modifier.weight(1f).clickable { }
                     )
                     Box(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.padding(24.dp)
                     ) {
-                        DateFilterSelector(
-                            monthsNames = dateFilter.monthNames,
-                            selectedMonth = selectedMonth,
-                            selectedYear = selectedYear,
-                            onYearSelect = {
-                                selectedYear = it.toInt()
-                                setLimitDateFilter(selectedMonth, selectedYear)
-                            },
-                            onMonthSelect = {
-                                selectedMonth = it.toInt()
-                                setLimitDateFilter(selectedMonth, selectedYear)
-                            }
+                        LimitDatePicker(
+                            selectedMonth = dateFilter.selectedMonth,
+                            selectedYear = dateFilter.selectedYear,
+                            onClick = { month, year -> setLimitDateFilter(month, year) },
                         )
                     }
-
                 }
                 LazyColumn(
                     state = stateVertical,
                     modifier = Modifier
-                        .padding(horizontal = 96.dp)
+                        .width(1000.dp)
+                        .align(Alignment.CenterHorizontally)
                 ) {
                     items(limit) {
                         SingleLimitCard(it)

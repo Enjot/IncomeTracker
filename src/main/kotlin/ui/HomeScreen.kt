@@ -18,18 +18,15 @@ fun HomeScreen(
 ) {
     val sortedFilteredSpendingsState = screenModel.sortedFilteredSpendings.collectAsState(emptyList())
     val allCategories = screenModel.allCategories.collectAsState(emptyList())
-    val allLimits = screenModel.allLimits.collectAsState(emptyList())
     val sortedCategoriesState = screenModel.sortedCategories.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
     val dateFilter = screenModel.spendingDateFilter.collectAsState()
     val currentLimits = screenModel.currentLimits.collectAsState(emptyList())
     val limitDataFilter = screenModel.limitDateFilter.collectAsState()
 
-    Surface(
-        color = MaterialTheme.colorScheme.surface, modifier = modifier
-    ) {
+    Surface(modifier = modifier) {
 
-        Row() {
+        Row {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,

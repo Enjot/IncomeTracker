@@ -266,20 +266,4 @@ data class DateFilter(
     var selectedMonth: Int = LocalDate.now().month.value,
     var selectedYear: Int = LocalDate.now().year,
     var isFiltered: Boolean = false,
-
-    val monthNames: List<String> = listOf(
-        "Styczeń",
-        "Luty",
-        "Marzec",
-        "Kwiecień",
-        "Maj",
-        "Czerwiec",
-        "Lipiec",
-        "Sierpień",
-        "Wrzesień",
-        "Październik",
-        "Listopad",
-        "Grudzień"
-    ),
-    val years: IntRange = 1950..2100
 )

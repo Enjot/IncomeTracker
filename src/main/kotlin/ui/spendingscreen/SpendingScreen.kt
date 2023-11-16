@@ -31,6 +31,7 @@ import com.example.sqldelight.Spending
 import kotlinx.coroutines.launch
 import ui.DateFilter
 import ui.SpendingSortType
+import ui.monthNames
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -70,9 +71,7 @@ fun SpendingScreen(
                     Text(
                         text = "Zarządzaj wydatkami",
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { }
+                        modifier = Modifier.weight(1f).clickable { }
                     )
                     // Had to wrap it in Box for normal dropdown menu behaviour
                     Box(
@@ -185,7 +184,7 @@ fun SpendingScreen(
             
             Column {
                 DateFilterSelector(
-                    monthsNames = dateFilter.monthNames,
+                    monthsNames = monthNames,
                     selectedMonth = selectedMonth,
                     selectedYear = selectedYear,
                     onYearSelect = { selectedYear = it.toInt() },
