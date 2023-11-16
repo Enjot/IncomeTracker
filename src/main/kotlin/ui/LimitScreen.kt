@@ -1,5 +1,6 @@
 package ui
 
+import Validator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -243,6 +244,7 @@ fun LimitDialog(
     var categoryName by remember { mutableStateOf("Wybierz kategorię") }
     var chosenCategory by remember { mutableStateOf(0) }
 
+    var isError by remember { mutableStateOf(false) }
 
     Row {
         Column(
@@ -262,6 +264,7 @@ fun LimitDialog(
             Spacer(modifier = Modifier.height(24.dp))
             OutlinedTextField(
                 value = amount,
+                isError = isError,
                 label = { Text("Kwota") },
                 onValueChange = { amount = it },
                 modifier = Modifier
@@ -284,10 +287,11 @@ fun LimitDialog(
             )
             Button(
                 onClick = {
-                    run {
+                    isError = false
+                    if (Validator.amountOfMoney(amount)) {
                         onAddButtonClick(category[chosenCategory], amount.toDouble())
                         onCloseDialog()
-                    }
+                    } else isError = true
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {
