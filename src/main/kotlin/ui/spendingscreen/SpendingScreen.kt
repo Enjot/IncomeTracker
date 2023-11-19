@@ -60,8 +60,9 @@ fun SpendingScreen(
             .fillMaxSize()
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
+        
     ) {
-        Box {
+        Box(modifier = Modifier.padding(start = 36.dp)) {
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

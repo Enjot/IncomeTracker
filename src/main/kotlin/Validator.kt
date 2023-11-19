@@ -8,6 +8,4 @@ object Validator {
             false
         }
     }
-    
 }
-

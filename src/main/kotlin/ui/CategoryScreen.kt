@@ -29,7 +29,6 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -57,7 +56,7 @@ fun CategoryScreen(
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
-        Box {
+        Box(modifier = Modifier.padding(start = 36.dp)) {
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

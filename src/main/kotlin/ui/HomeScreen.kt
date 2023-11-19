@@ -1,11 +1,14 @@
 package ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ui.spendingscreen.SpendingScreen
@@ -24,16 +27,16 @@ fun HomeScreen(
     val currentLimits = screenModel.currentLimits.collectAsState(emptyList())
     val limitDataFilter = screenModel.limitDateFilter.collectAsState()
 
-    Surface(modifier = modifier) {
-
-        Row {
+    Surface {
+        Row(
+            Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+        ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .width(120.dp)
+                    .width(100.dp)
                     .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 NavigationRailItem(
                     selected = currentDestination == Destination.SPENDINGS,
@@ -121,62 +124,74 @@ fun HomeScreen(
                         .padding(vertical = 12.dp)
                 )
             }
+            AnimatedContent(
+                targetState = currentDestination,
+                modifier = Modifier
+                    .shadow(128.dp, shape = RoundedCornerShape(topStart = 64.dp, bottomStart = 64.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+            ) { destination ->
+                when (destination) {
+                    Destination.SPENDINGS -> {
+                        SpendingScreen(
+                            onItemClick = { id -> screenModel.deleteSpending(id) },
+                            onAddClick = { name, amount, category ->
+                                screenModel.insertSpending(
+                                    name,
+                                    amount,
+                                    category
+                                )
+                            },
+                            onSortClick = { type -> screenModel.setSpendingSortType(type) },
+                            onCategoryClick = { filter -> screenModel.selectSortedCategory(filter) },
+                            onResetDateFilter = { screenModel.resetDateFilter() },
+                            setDateFilter = { month, year, isFiltered ->
+                                screenModel.setSpendingDateFilter(
+                                    month,
+                                    year,
+                                    isFiltered
+                                )
+                            },
+                            chosenSortType = screenModel.spendingSortType.value,
+                            spendings = sortedFilteredSpendingsState.value,
+                            dateFilter = dateFilter.value,
+                            categories = allCategories.value.filter { it.isVisible.toInt() == 1 },
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
 
-            when (currentDestination) {
-                Destination.SPENDINGS -> {
-                    SpendingScreen(
-                        onItemClick = { id -> screenModel.deleteSpending(id) },
-                        onAddClick = { name, amount, category -> screenModel.insertSpending(name, amount, category) },
-                        onSortClick = { type -> screenModel.setSpendingSortType(type) },
-                        onCategoryClick = { filter -> screenModel.selectSortedCategory(filter) },
-                        onResetDateFilter = { screenModel.resetDateFilter() },
-                        setDateFilter = { month, year, isFiltered ->
-                            screenModel.setSpendingDateFilter(
-                                month,
-                                year,
-                                isFiltered
-                            )
-                        },
-                        chosenSortType = screenModel.spendingSortType.value,
-                        spendings = sortedFilteredSpendingsState.value,
-                        dateFilter = dateFilter.value,
-                        categories = allCategories.value.filter { it.isVisible.toInt() == 1 },
-                        modifier = Modifier
-                            .fillMaxSize()
-                    )
-                }
+                    Destination.CATEGORIES -> {
+                        CategoryScreen(
+                            onItemClick = { name -> screenModel.setHiddenCategory(name) },
+                            onAddButtonClick = { name -> screenModel.insertCategory(name) },
+                            onSortClick = { type -> screenModel.setCategorySortType(type) },
+                            categories = sortedCategoriesState.value,
+                            chosenSortType = screenModel.categorySortType.value
+                        )
+                    }
 
-                Destination.CATEGORIES -> {
-                    CategoryScreen(
-                        onItemClick = { name -> screenModel.setHiddenCategory(name) },
-                        onAddButtonClick = { name -> screenModel.insertCategory(name) },
-                        onSortClick = { type -> screenModel.setCategorySortType(type) },
-                        categories = sortedCategoriesState.value,
-                        chosenSortType = screenModel.categorySortType.value
-                    )
-                }
+                    Destination.LIMITS -> {
+                        LimitScreen(
+                            onAddButtonClick = { category, amount -> screenModel.insertLimit(category, amount) },
+                            limit = currentLimits.value,
+                            category = allCategories.value.filter { it.isVisible.toInt() == 1 },
+                            dateFilter = limitDataFilter.value,
+                            setLimitDateFilter = { month, year ->
+                                screenModel.setLimitDateFilter(
+                                    month,
+                                    year
+                                )
+                            }
+                        )
+                    }
 
-                Destination.LIMITS -> {
-                    LimitScreen(
-                        onAddButtonClick = { category, amount -> screenModel.insertLimit(category, amount) },
-                        limit = currentLimits.value,
-                        category = allCategories.value.filter { it.isVisible.toInt() == 1 },
-                        dateFilter = limitDataFilter.value,
-                        setLimitDateFilter = {month, year ->
-                            screenModel.setLimitDateFilter(
-                                month,
-                                year
-                            )
-                        }
-                    )
-                }
+                    Destination.CHARTS -> {
+                        Surface(modifier = Modifier.fillMaxSize()) { }
+                    }
 
-                Destination.CHARTS -> {
-                    Surface(modifier = Modifier.fillMaxSize()) {  }
-                }
-
-                Destination.SETTINGS -> {
-                    Surface(modifier = Modifier.fillMaxSize()) {  }
+                    Destination.SETTINGS -> {
+//                            Surface(modifier = Modifier.fillMaxSize()) { }
+                    }
                 }
             }
         }
