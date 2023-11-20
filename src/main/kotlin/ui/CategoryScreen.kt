@@ -73,7 +73,7 @@ fun CategoryScreen(
                             .wrapContentSize(Alignment.BottomEnd)
                             .padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
-                        val width = 225.dp
+                        val width = 200.dp
                         Box {
                             OutlinedTextField(
                                 value = chosenSortType.sortType,
