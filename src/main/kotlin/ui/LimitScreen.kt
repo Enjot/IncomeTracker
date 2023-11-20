@@ -69,16 +69,19 @@ fun LimitScreen(
                         )
                     }
                 }
-                LazyColumn(
-                    state = stateVertical,
-                    modifier = Modifier
-                        .width(1000.dp)
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    items(limit) {
-                        SingleLimitCard(it)
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    LazyColumn(
+                        state = stateVertical,
+                        modifier = Modifier
+                            .weight(6f)
+                    ) {
+                        items(limit) {
+                            SingleLimitCard(it)
+                        }
+                        item { Spacer(modifier = Modifier.height(128.dp)) }
                     }
-                    item { Spacer(modifier = Modifier.height(128.dp)) }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
 
             }
