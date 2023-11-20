@@ -49,7 +49,7 @@ fun LimitScreen(
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
         Box(modifier = Modifier.padding(start = 36.dp)) {
-            Column(modifier = Modifier.padding(end = 36.dp)) {
+            Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -60,7 +60,7 @@ fun LimitScreen(
                         modifier = Modifier.weight(1f).clickable { }
                     )
                     Box(
-                        modifier = Modifier.padding(24.dp)
+                        modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
                         LimitDatePicker(
                             selectedMonth = dateFilter.selectedMonth,
@@ -69,7 +69,7 @@ fun LimitScreen(
                         )
                     }
                 }
-                Row(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.fillMaxSize().padding(end = 36.dp)) {
                     Spacer(modifier = Modifier.weight(1f))
                     LazyColumn(
                         state = stateVertical,
