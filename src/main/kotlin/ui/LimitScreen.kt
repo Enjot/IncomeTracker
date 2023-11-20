@@ -48,8 +48,8 @@ fun LimitScreen(
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
     ) {
-        Box(modifier = Modifier.padding(start = 36.dp, end = 36.dp)) {
-            Column {
+        Box(modifier = Modifier.padding(start = 36.dp)) {
+            Column(modifier = Modifier.padding(end = 36.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
@@ -94,7 +94,7 @@ fun LimitScreen(
                 expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(start = 48.dp, top = 48.dp, bottom = 48.dp, end = 12.dp)
+                    .padding(48.dp)
             )
             AnimatedVisibility(
                 visible = showScrollbar,
