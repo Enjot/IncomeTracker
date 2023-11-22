@@ -19,13 +19,13 @@ import ui.spendingscreen.SpendingScreen
 fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
-    val sortedFilteredSpendingsState = screenModel.sortedFilteredSpendings.collectAsState(emptyList())
-    val allCategories = screenModel.allCategories.collectAsState(emptyList())
-    val sortedCategoriesState = screenModel.sortedCategories.collectAsState(emptyList())
+    val spendings = screenModel.spendings.collectAsState(emptyList())
+    val categories = screenModel.categories.collectAsState(emptyList())
+    val categoriesSummary = screenModel.categoriesSummary.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
-    val dateFilter = screenModel.spendingDateFilter.collectAsState()
-    val currentLimits = screenModel.currentLimits.collectAsState(emptyList())
-    val limitDataFilter = screenModel.limitDateFilter.collectAsState()
+    val dateFilter = screenModel.filterSpendingByDate.collectAsState()
+    val limits = screenModel.limits.collectAsState(emptyList())
+    val limitDateFilter = screenModel.filterLimitByDate.collectAsState()
 
     Surface {
         Row(
@@ -142,19 +142,19 @@ fun HomeScreen(
                                 )
                             },
                             onSortClick = { type -> screenModel.setSpendingSortType(type) },
-                            onCategoryClick = { filter -> screenModel.selectSortedCategory(filter) },
-                            onResetDateFilter = { screenModel.resetDateFilter() },
+                            onCategoryClick = { filter -> screenModel.setSpendingFilterByCategory(filter) },
+                            onResetDateFilter = { screenModel.resetSpendingDateFilter() },
                             setDateFilter = { month, year, isFiltered ->
-                                screenModel.setSpendingDateFilter(
+                                screenModel.setFilterSpendingByDate(
                                     month,
                                     year,
                                     isFiltered
                                 )
                             },
-                            chosenSortType = screenModel.spendingSortType.value,
-                            spendings = sortedFilteredSpendingsState.value,
+                            chosenSortType = screenModel.sortSpending.value,
+                            spendings = spendings.value,
                             dateFilter = dateFilter.value,
-                            categories = allCategories.value.filter { it.isVisible.toInt() == 1 },
+                            categories = categories.value,
                             modifier = Modifier
                                 .fillMaxSize()
                         )
@@ -162,22 +162,22 @@ fun HomeScreen(
 
                     Destination.CATEGORIES -> {
                         CategoryScreen(
-                            onItemClick = { name -> screenModel.setHiddenCategory(name) },
+                            onItemClick = { name -> screenModel.deleteCategory(name) },
                             onAddButtonClick = { name -> screenModel.insertCategory(name) },
                             onSortClick = { type -> screenModel.setCategorySortType(type) },
-                            categories = sortedCategoriesState.value,
-                            chosenSortType = screenModel.categorySortType.value
+                            categories = categoriesSummary.value,
+                            chosenSortType = screenModel.sortCategory.value
                         )
                     }
 
                     Destination.LIMITS -> {
                         LimitScreen(
                             onAddButtonClick = { category, amount -> screenModel.insertLimit(category, amount) },
-                            limit = currentLimits.value,
-                            category = allCategories.value.filter { it.isVisible.toInt() == 1 },
-                            dateFilter = limitDataFilter.value,
+                            limit = limits.value,
+                            category = categories.value,
+                            dateFilter = limitDateFilter.value,
                             setLimitDateFilter = { month, year ->
-                                screenModel.setLimitDateFilter(
+                                screenModel.setFilterLimitByDate(
                                     month,
                                     year
                                 )
