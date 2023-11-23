@@ -25,7 +25,7 @@ fun SingleSpendingItem(
     modifier: Modifier = Modifier
 ) {
     var enabled by remember { mutableStateOf(true) }
-    val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.970f)
+    val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.95f)
     
     Row(
         modifier = modifier

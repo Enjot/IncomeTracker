@@ -1,5 +1,5 @@
-
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -9,8 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -53,15 +58,10 @@ fun main() = application {
     }
 
     val state = rememberWindowState(
-        width = WINDOW_INITIAL_WIDTH.dp,
-        height = WINDOW_INITIAL_HEIGHT.dp,
-        position = WindowPosition(Alignment.Center)
+        width = WINDOW_INITIAL_WIDTH.dp, height = WINDOW_INITIAL_HEIGHT.dp, position = WindowPosition(Alignment.Center)
     )
     Window(
-        onCloseRequest = ::exitApplication,
-        title = "Expense Tracker",
-        state = state,
-        resizable = true
+        onCloseRequest = ::exitApplication, title = "Expense Tracker", state = state, resizable = true
     ) {
         window.minimumSize = Dimension(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         AppTheme() {
@@ -87,123 +87,68 @@ class HomeScreen : Screen {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .width(100.dp)
-                        .fillMaxHeight()
+                    modifier = Modifier.width(100.dp).fillMaxHeight()
                 ) {
-                    NavigationRailItem(
+                    SingleNavigationRailItem(
                         selected = currentDestination == Destination.SPENDINGS,
                         onClick = { currentDestination = Destination.SPENDINGS },
-                        label = { Text("Wydatki") },
-                        icon = {
-                            Icon(
-                                if (currentDestination == Destination.SPENDINGS) {
-                                    painterResource("drawable/icons/spendingFilled.svg")
-                                } else {
-                                    painterResource("drawable/icons/spending.svg")
-                                },
-                                contentDescription = null,
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
+                        text = "Wydatki",
+                        selectedIcon = painterResource("drawable/icons/spendingFilled.svg"),
+                        unselectedIcon = painterResource("drawable/icons/spending.svg")
                     )
-                    NavigationRailItem(
+                    SingleNavigationRailItem(
                         selected = currentDestination == Destination.CATEGORIES,
                         onClick = { currentDestination = Destination.CATEGORIES },
-                        label = { Text("Kategorie") },
-                        icon = {
-                            Icon(
-                                if (currentDestination == Destination.CATEGORIES) {
-                                    painterResource("drawable/icons/categoryFilled.svg")
-                                } else {
-                                    painterResource("drawable/icons/category.svg")
-                                },
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
+                        text = "Kategorie",
+                        selectedIcon = painterResource("drawable/icons/categoryFilled.svg"),
+                        unselectedIcon = painterResource("drawable/icons/category.svg")
                     )
-                    NavigationRailItem(
+                    SingleNavigationRailItem(
                         selected = currentDestination == Destination.LIMITS,
                         onClick = { currentDestination = Destination.LIMITS },
-                        label = { Text("Limity") },
-                        icon = {
-                            Icon(
-                                if (currentDestination == Destination.LIMITS) {
-                                    painterResource("drawable/icons/limitsFilled.svg")
-                                } else {
-                                    painterResource("drawable/icons/limits.svg")
-                                },
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
+                        text = "Limity",
+                        selectedIcon = painterResource("drawable/icons/limitsFilled.svg"),
+                        unselectedIcon = painterResource("drawable/icons/limits.svg")
                     )
-                    NavigationRailItem(
+                    SingleNavigationRailItem(
                         selected = currentDestination == Destination.CHARTS,
                         onClick = { currentDestination = Destination.CHARTS },
-                        label = { Text("Statystyki") },
-                        icon = {
-                            Icon(
-                                if (currentDestination == Destination.CHARTS) {
-                                    painterResource("drawable/icons/chartsFilled.svg")
-                                } else {
-                                    painterResource("drawable/icons/charts.svg")
-                                },
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
+                        text = "Statystyki",
+                        selectedIcon = painterResource("drawable/icons/chartsFilled.svg"),
+                        unselectedIcon = painterResource("drawable/icons/charts.svg")
                     )
-                    NavigationRailItem(
+                    SingleNavigationRailItem(
                         selected = currentDestination == Destination.SETTINGS,
                         onClick = { currentDestination = Destination.SETTINGS },
-                        label = { Text("Ustawienia") },
-                        icon = {
-                            Icon(
-                                if (currentDestination == Destination.SETTINGS) {
-                                    painterResource("drawable/icons/settingsFilled.svg")
-                                } else {
-                                    painterResource("drawable/icons/settings.svg")
-                                },
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
+                        text = "Kategorie",
+                        selectedIcon = painterResource("drawable/icons/settingsFilled.svg"),
+                        unselectedIcon = painterResource("drawable/icons/settings.svg")
                     )
                 }
                 AnimatedContent(
                     targetState = currentDestination,
                     modifier = Modifier
-                        .shadow(128.dp, shape = RoundedCornerShape(topStart = 64.dp, bottomStart = 64.dp))
+                        .shadow(
+                            128.dp,
+                            shape = RoundedCornerShape(topStart = 64.dp, bottomStart = 64.dp)
+                        )
                         .background(MaterialTheme.colorScheme.surface)
                 ) { destination ->
                     when (destination) {
                         Destination.SPENDINGS -> {
-                            SpendingScreen(spendingScreenModel, modifier = Modifier.fillMaxSize())
+                            SpendingScreen(spendingScreenModel)
                         }
 
                         Destination.CATEGORIES -> {
-                            KoinTestComposable(
-                                categoryScreenModel
-                            )
+                            KoinTestComposable(categoryScreenModel)
                         }
 
                         Destination.LIMITS -> {
-                            KoinTestComposable(
-                                categoryScreenModel
-                            )
+                            KoinTestComposable(categoryScreenModel)
                         }
 
                         Destination.CHARTS -> {
-                            KoinTestComposable(
-                                categoryScreenModel
-                            )
+                            KoinTestComposable(categoryScreenModel)
                         }
 
                         Destination.SETTINGS -> {
@@ -216,20 +161,50 @@ class HomeScreen : Screen {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun SingleNavigationRailItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    text: String,
+    selectedIcon: Painter,
+    unselectedIcon: Painter,
+    modifier: Modifier = Modifier
+) {
+    var pressed by remember { mutableStateOf(true) }
+    val alpha: Float by animateFloatAsState(if (pressed) 1f else 0.9f)
+
+    NavigationRailItem(selected = selected,
+        onClick = onClick,
+        label = { Text(text) },
+        icon = {
+            Icon(
+                if (selected) {
+                    selectedIcon
+                } else {
+                    unselectedIcon
+                },
+                contentDescription = null,
+            )
+        },
+        modifier = modifier.padding(vertical = 12.dp).graphicsLayer(scaleX = alpha, scaleY = alpha)
+            .onPointerEvent(PointerEventType.Press) { pressed = false }
+            .onPointerEvent(PointerEventType.Release) { pressed = true })
+}
+
+
 @Composable
 fun KoinTestComposable(
     model: CategoryScreenModel
 ) {
     val categories = model.categories.collectAsState(emptyList())
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(200.dp),
-        modifier = Modifier.fillMaxSize()
-            .padding(64.dp)
+        columns = GridCells.Adaptive(200.dp), modifier = Modifier.fillMaxSize().padding(64.dp)
     ) {
         items(categories.value) { category ->
             Text(
-                text = "$category",
-                modifier = Modifier.padding(8.dp))
+                text = "$category", modifier = Modifier.padding(8.dp)
+            )
         }
     }
 

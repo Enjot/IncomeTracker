@@ -30,8 +30,7 @@ import ui.utils.monthNames
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SpendingScreen(
-    model: SpendingScreenModel,
-    modifier: Modifier = Modifier
+    model: SpendingScreenModel
 ) {
     val spendings = model.spendings.collectAsState(emptyList())
     val categories = model.categories.collectAsState(emptyList())

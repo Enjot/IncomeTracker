@@ -10,11 +10,9 @@ import ui.DateFilter
 import java.time.LocalDate
 
 class SpendingScreenModel(
-    repository: DatabaseRepository
+    private val repository: DatabaseRepository
 ) : ScreenModel {
-
-    private val repo = repository
-
+    
     val categories = repository.tables.categories.map { list -> 
         list.filter { category -> category.isVisible.toInt() == 1 }
     }
@@ -24,7 +22,7 @@ class SpendingScreenModel(
     private var filterByCategory: MutableStateFlow<String> = MutableStateFlow("")
 
     val spendings = combine(
-        repo.tables.spendings, sortType, filterByCategory, filterByDate
+        repository.tables.spendings, sortType, filterByCategory, filterByDate
     ) { spendings, sortType, categoryFilter, dateFilter ->
         var sortedFilteredSpendings = when (sortType) {
             SpendingSortType.AMOUNT_INC -> spendings.sortedBy { it.amount }
@@ -47,10 +45,10 @@ class SpendingScreenModel(
     }
 
     fun insert(name: String, amount: Double, category: Category, date: String = LocalDate.now().toString()) {
-        repo.insertSpending(name, amount, category, date)
+        repository.insertSpending(name, amount, category, date)
     }
 
-    fun delete(id: Long) = repo.deleteSpending(id)
+    fun delete(id: Long) = repository.deleteSpending(id)
     fun setSortType(type: SpendingSortType) {
         sortType.value = type
     }
