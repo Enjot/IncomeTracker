@@ -3,15 +3,12 @@ package ui.spendingscreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ScrollbarStyle
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,35 +23,25 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import com.example.sqldelight.Category
-import com.example.sqldelight.Spending
 import kotlinx.coroutines.launch
-import ui.DateFilter
-import ui.SpendingSortType
-import ui.monthNames
+import ui.utils.monthNames
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SpendingScreen(
-    onItemClick: (Long) -> Unit,
-    onSortClick: (SpendingSortType) -> Unit,
-    onAddClick: (String, Double, Category) -> Unit,
-    onCategoryClick: (String) -> Unit,
-    onResetDateFilter: () -> Unit,
-    setDateFilter: (Int, Int, Boolean) -> Unit,
-    chosenSortType: SpendingSortType,
-    categories: List<Category>,
-    spendings: List<Spending>,
-    dateFilter: DateFilter,
+    model: SpendingScreenModel,
     modifier: Modifier = Modifier
 ) {
+    val spendings = model.spendings.collectAsState(emptyList())
+    val categories = model.categories.collectAsState(emptyList())
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
-
+    
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -80,8 +67,8 @@ fun SpendingScreen(
                             .padding(24.dp)
                     ) {
                         SortPicker(
-                            onSortClick = onSortClick,
-                            value = chosenSortType.sortType,
+                            onSortClick = { type -> model.setSortType(type) },
+                            value = model.sortType.value.visibleName,
                         )
                     }
                     OutlinedButton(
@@ -101,17 +88,17 @@ fun SpendingScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
-                    state = stateVertical
+                    state = stateVertical,
                 ) {
-                    items(spendings) {
+                    items(spendings.value, key = { it.id } ) { spending ->
                         SingleSpendingItem(
-                            onItemClick,
-                            it
+                            { id -> model.delete(id) },
+                            spending,
+                            modifier = Modifier.animateItemPlacement()
                         )
                     }
                     item {
                         Spacer(modifier = Modifier.height(128.dp))
-
                     }
                 }
             }
@@ -164,9 +151,15 @@ fun SpendingScreen(
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 AddSpending(
-                    onAddClick,
+                    { name, amount, category ->
+                        model.insert(
+                            name,
+                            amount,
+                            category
+                        )
+                    },
                     { dialog = !dialog },
-                    categories
+                    categories.value
                 )
             }
         }
@@ -179,9 +172,9 @@ fun SpendingScreen(
             sheetState = sheetState
         ) {
 
-            var selectedMonth by remember { mutableStateOf(dateFilter.selectedMonth) }
-            var selectedYear by remember { mutableStateOf(dateFilter.selectedYear) }
-            var isFiltered by remember { mutableStateOf(dateFilter.isFiltered) }
+            var selectedMonth by remember { mutableStateOf(model.filterByDate.value.selectedMonth) }
+            var selectedYear by remember { mutableStateOf(model.filterByDate.value.selectedYear) }
+            var isFiltered by remember { mutableStateOf(model.filterByDate.value.isFiltered) }
             
             Column {
                 DateFilterSelector(
@@ -212,18 +205,16 @@ fun SpendingScreen(
                             text = "Pokaż wszystkie",
                             modifier = Modifier
                                 .padding(4.dp)
-                                .clickable {
-                                    onCategoryClick("")
-                                }
+                                .clickable { model.setFilterByCategory("") }
                         )
                     }
-                    items(categories) {
+                    items(categories.value) { category ->
                         Text(
-                            text = it.name,
+                            text = category.name,
                             modifier = Modifier
                                 .padding(4.dp)
                                 .clickable {
-                                    onCategoryClick(it.name)
+                                    model.setFilterByCategory(category.name)
                                 }
                         )
                     }
@@ -231,8 +222,8 @@ fun SpendingScreen(
                 Row {
                     TextButton(
                         onClick = {
-                            onCategoryClick("")
-                            onResetDateFilter()
+                            model.setFilterByCategory("")
+                            model.resetDateFilter()
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 if (!sheetState.isVisible) {
                                     showBottomSheet = false
@@ -246,7 +237,7 @@ fun SpendingScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
                         onClick = {
-                            setDateFilter(selectedMonth, selectedYear, isFiltered)
+                            model.setFilterByDate(selectedMonth, selectedYear, isFiltered)
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 if (!sheetState.isVisible) showBottomSheet = false
                             }

@@ -14,5 +14,9 @@ insert:
 INSERT INTO limitOfCategory(category, date, limitAmount)
 VALUES (?,?,?);
 
+delete:
+DELETE FROM limitOfCategory
+WHERE id = ?;
+
 deleteAll:
 DELETE FROM limitOfCategory;

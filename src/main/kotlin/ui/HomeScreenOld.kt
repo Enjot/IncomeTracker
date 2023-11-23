@@ -1,5 +1,3 @@
-package ui
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,7 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ui.spendingscreen.SpendingScreen
+import ui.HomeScreenModel
+import ui.categoryscreen.CategoryScreen
+import ui.chartscreen.ChartScreen
+import ui.limitscreen.LimitScreen
+
 
 // root composable function
 
@@ -19,15 +21,13 @@ import ui.spendingscreen.SpendingScreen
 fun HomeScreen(
     screenModel: HomeScreenModel, modifier: Modifier = Modifier
 ) {
-    val spendings = screenModel.spendings.collectAsState(emptyList())
     val categories = screenModel.categories.collectAsState(emptyList())
     val categoriesSummary = screenModel.categoriesSummary.collectAsState(emptyList())
     var currentDestination by remember { mutableStateOf(Destination.SPENDINGS) }
-    val dateFilter = screenModel.filterSpendingByDate.collectAsState()
     val limits = screenModel.limits.collectAsState(emptyList())
     val limitDateFilter = screenModel.filterLimitByDate.collectAsState()
     val chartDateFilter = screenModel.statisticFilter.collectAsState()
-    val chartStatistics = screenModel.currentMonthStatstics.collectAsState(emptyMap<String,Double>())
+    val chartStatistics = screenModel.currentMonthStatstics.collectAsState(emptyMap())
 
     Surface {
         Row(
@@ -134,32 +134,7 @@ fun HomeScreen(
             ) { destination ->
                 when (destination) {
                     Destination.SPENDINGS -> {
-                        SpendingScreen(
-                            onItemClick = { id -> screenModel.deleteSpending(id) },
-                            onAddClick = { name, amount, category ->
-                                screenModel.insertSpending(
-                                    name,
-                                    amount,
-                                    category
-                                )
-                            },
-                            onSortClick = { type -> screenModel.setSpendingSortType(type) },
-                            onCategoryClick = { filter -> screenModel.setSpendingFilterByCategory(filter) },
-                            onResetDateFilter = { screenModel.resetSpendingDateFilter() },
-                            setDateFilter = { month, year, isFiltered ->
-                                screenModel.setFilterSpendingByDate(
-                                    month,
-                                    year,
-                                    isFiltered
-                                )
-                            },
-                            chosenSortType = screenModel.sortSpending.value,
-                            spendings = spendings.value,
-                            dateFilter = dateFilter.value,
-                            categories = categories.value,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
+
                     }
 
                     Destination.CATEGORIES -> {

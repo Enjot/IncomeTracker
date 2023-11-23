@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ui.SpendingSortType
 
 @Composable
 fun SortPicker(
@@ -71,42 +70,42 @@ fun SortPicker(
         modifier = Modifier.width(width)
     ) {
         DropdownMenuItem(
-            text = { Text(SpendingSortType.NAME_INC.sortType) },
+            text = { Text(SpendingSortType.NAME_INC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.NAME_INC)
                 expanded = false
             }
         )
         DropdownMenuItem(
-            text = { Text(SpendingSortType.NAME_DEC.sortType) },
+            text = { Text(SpendingSortType.NAME_DEC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.NAME_DEC)
                 expanded = false
             }
         )
         DropdownMenuItem(
-            text = { Text(SpendingSortType.AMOUNT_INC.sortType) },
+            text = { Text(SpendingSortType.AMOUNT_INC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.AMOUNT_INC)
                 expanded = false
             }
         )
         DropdownMenuItem(
-            text = { Text(SpendingSortType.AMOUNT_DEC.sortType) },
+            text = { Text(SpendingSortType.AMOUNT_DEC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.AMOUNT_DEC)
                 expanded = false
             }
         )
         DropdownMenuItem(
-            text = { Text(SpendingSortType.DATE_INC.sortType) },
+            text = { Text(SpendingSortType.DATE_INC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.DATE_INC)
                 expanded = false
             }
         )
         DropdownMenuItem(
-            text = { Text(SpendingSortType.AMOUNT_DEC.sortType) },
+            text = { Text(SpendingSortType.AMOUNT_DEC.visibleName) },
             onClick = {
                 onSortClick(SpendingSortType.DATE_DEC)
                 expanded = false

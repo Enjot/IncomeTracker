@@ -1,4 +1,4 @@
-package ui
+package ui.categoryscreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,6 +29,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ui.CategorySortType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
