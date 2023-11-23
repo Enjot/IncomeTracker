@@ -5,7 +5,6 @@ plugins {
     id("org.jetbrains.compose") version "1.5.10"
     id("app.cash.sqldelight") version "2.0.0"
     id ("com.google.devtools.ksp") version "1.9.20-1.0.13"
-
 }
 
 group = "com.example"
@@ -37,6 +36,10 @@ dependencies {
 
     // Koin
     implementation ("io.insert-koin:koin-core:3.5.0")
+
+    //AAY-chart
+    implementation("io.github.thechance101:chart:Beta-0.0.5")
+
 }
 
 compose.desktop {

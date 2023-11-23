@@ -26,6 +26,8 @@ fun HomeScreen(
     val dateFilter = screenModel.filterSpendingByDate.collectAsState()
     val limits = screenModel.limits.collectAsState(emptyList())
     val limitDateFilter = screenModel.filterLimitByDate.collectAsState()
+    val chartDateFilter = screenModel.statisticFilter.collectAsState()
+    val chartStatistics = screenModel.currentMonthStatstics.collectAsState(emptyMap<String,Double>())
 
     Surface {
         Row(
@@ -186,7 +188,16 @@ fun HomeScreen(
                     }
 
                     Destination.CHARTS -> {
-                        Surface(modifier = Modifier.fillMaxSize()) { }
+                        ChartScreen(
+                            monthStatistic = chartStatistics.value,
+                            dateFilter = chartDateFilter.value,
+                            setStatisticsFilter = {month, year ->
+                                screenModel.setChartByDate(
+                                    month,
+                                    year
+                                )
+                            }
+                        )
                     }
 
                     Destination.SETTINGS -> {

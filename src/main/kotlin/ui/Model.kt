@@ -36,6 +36,7 @@ class HomeScreenModel(
     var sortCategory = MutableStateFlow(CategorySortType.NAME_INC)
 
     var filterLimitByDate = MutableStateFlow(DateFilter())
+    var statisticFilter = MutableStateFlow(DateFilter())
 
     var spendings = combine(
         _spendings, sortSpending, filterSpendingByCategory, filterSpendingByDate
@@ -160,6 +161,27 @@ class HomeScreenModel(
 
     fun setFilterLimitByDate(month: Int, year: Int, isFiltered: Boolean = true) {
         filterLimitByDate.value = DateFilter(month, year, isFiltered)
+    }
+
+    /* ---------- CHART SCREEN FUNCTIONS ---------- */
+    var currentMonthStatstics = combine(_spendings, statisticFilter) { spending, filter ->
+        val mapOfCategories: MutableMap<String, Double> = mutableMapOf()
+
+        spending.forEach {
+            if (it.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}")) {
+                if (!mapOfCategories.containsKey(it.category)) {
+                    mapOfCategories[it.category] = it.amount
+                } else {
+                    mapOfCategories[it.category] = mapOfCategories[it.category]!! + it.amount
+                }
+            }
+        }
+
+        return@combine mapOfCategories
+    }
+
+    fun setChartByDate(month: Int, year: Int, isFiltered: Boolean = true) {
+        statisticFilter.value = DateFilter(month, year, isFiltered)
     }
 
     init {
