@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,19 +18,20 @@ import androidx.compose.ui.unit.sp
 import com.aay.compose.barChart.BarChart
 import com.aay.compose.barChart.model.BarParameters
 import com.aay.compose.baseComponents.model.LegendPosition
-import ui.DateFilter
+import data.DateFilter
 import ui.utils.LimitDatePicker
 import kotlin.random.Random
 
 
 @Composable
 fun ChartScreen(
-    monthStatistic: Map<String,Double>,
-    dateFilter: DateFilter,
-    setStatisticsFilter: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
-        .background(Color.White)
+//    monthStatistic: Map<String,Double>,
+//    dateFilter: DateFilter,
+//    setStatisticsFilter: (Int, Int) -> Unit,
+    model: ChartScreenModel
 ) {
+    val monthStatistic = model.currentMonthStatstics.collectAsState(emptyMap<String,Double>())
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ){
@@ -48,15 +50,15 @@ fun ChartScreen(
                         modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
                         LimitDatePicker(
-                            selectedMonth = dateFilter.selectedMonth,
-                            selectedYear = dateFilter.selectedYear,
-                            onClick = { month, year -> setStatisticsFilter(month, year) },
+                            selectedMonth = model.filter.value.selectedMonth,
+                            selectedYear = model.filter.value.selectedYear,
+                            onClick = { month, year -> model.setFilter(month, year) },
                         )
                     }
                 }
                 Row (modifier = Modifier.fillMaxSize().padding(end = 36.dp)){
 //                    DonutChartSample(monthStatistic)
-                    BarChartSample(monthStatistic, dateFilter)
+                    BarChartSample(monthStatistic.value, model.filter.value)
                 }
             }
         }

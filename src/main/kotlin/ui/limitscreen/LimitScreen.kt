@@ -28,20 +28,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Category
-import ui.CurrentLimit
-import ui.DateFilter
 import ui.utils.LimitDatePicker
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun LimitScreen(
-    onAddButtonClick: (Category, Double) -> Unit,
-    setLimitDateFilter: (Int, Int) -> Unit,
-    category: List<Category>,
-    limit: List<CurrentLimit>,
-    dateFilter: DateFilter
+    model: LimitScreenModel
 ) {
 
+    val limit = model.limits.collectAsState(emptyList())
+    val category = model.categories.collectAsState(emptyList())
     var showScrollbar by remember { mutableStateOf(false) }
     val stateVertical = rememberLazyListState()
     var dialog by remember { mutableStateOf(false) }
@@ -66,9 +62,9 @@ fun LimitScreen(
                         modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
                         LimitDatePicker(
-                            selectedMonth = dateFilter.selectedMonth,
-                            selectedYear = dateFilter.selectedYear,
-                            onClick = { month, year -> setLimitDateFilter(month, year) },
+                            selectedMonth = model.filter.value.selectedMonth,
+                            selectedYear = model.filter.value.selectedYear,
+                            onClick = { month, year -> model.setFilter(month, year, true) },
                         )
                     }
                 }
@@ -79,7 +75,7 @@ fun LimitScreen(
                         modifier = Modifier
                             .weight(6f)
                     ) {
-                        items(limit) {
+                        items(limit.value){
                             SingleLimitCard(it)
                         }
                         item { Spacer(modifier = Modifier.height(128.dp)) }
@@ -137,9 +133,9 @@ fun LimitScreen(
                         .clip(RoundedCornerShape(24.dp))
                 ) {
                     LimitDialog(
-                        onAddButtonClick,
+                        {category, amount -> model.insert(category, amount)},
                         { dialog = !dialog },
-                        category
+                        category.value
                     )
                 }
             }
@@ -147,168 +143,5 @@ fun LimitScreen(
     }
 }
 
-@Composable
-fun SingleLimitCard(
-    item: CurrentLimit
-) {
-
-    val ratio = (item.currentAmount / item.limitAmount).toFloat()
-    val progressColor =
-        if (ratio < 0.9f) MaterialTheme.colorScheme.primary
-        else MaterialTheme.colorScheme.error
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp)
-    ) {
-        Column {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = item.categoryName,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = item.currentDate,
-                    fontWeight = FontWeight.Medium,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row {
-                LinearProgressIndicator(
-                    color = progressColor,
-                    progress = ratio,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .padding(start = 12.dp, end = 12.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(12.dp)
-            ) {
-                Text(
-                    text = "%.2f zł".format(item.currentAmount),
-                    fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Text(
-                    text = "%.2f zł".format(item.limitAmount),
-                    fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-        }
-
-    }
-}
-
-@Composable
-fun LimitDialog(
-    onAddButtonClick: (Category, Double) -> Unit,
-    onCloseDialog: () -> Unit,
-    category: List<Category>
-) {
-
-    var amount by remember { mutableStateOf("") }
-    var categoryName by remember { mutableStateOf("Wybierz kategorię") }
-    var chosenCategory by remember { mutableStateOf(0) }
-
-    var isError by remember { mutableStateOf(false) }
-
-    Row {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(48.dp)
-                .fillMaxHeight()
-                .wrapContentWidth()
-
-        ) {
-            Text(
-                text = "Ustal limit",
-                style = MaterialTheme.typography.displaySmall
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            OutlinedTextField(
-                value = amount,
-                isError = isError,
-                label = { Text("Kwota") },
-                onValueChange = { amount = it },
-                modifier = Modifier
-                    .padding(12.dp)
-                    .focusable()
-//                            .focusRequester(focusRequester)
-            )
-            Spacer(modifier = Modifier.height(36.dp))
-            OutlinedTextField(
-                value = categoryName,
-                label = { Text("Kategria") },
-                singleLine = true,
-                readOnly = true,
-                onValueChange = { },
-                modifier = Modifier
-                    .padding(12.dp)
-                    .focusable()
-
-//                            .focusRequester(focusRequester)
-            )
-            Button(
-                onClick = {
-                    isError = false
-                    if(Validator.isValidAmount(amount)) {
-                        onAddButtonClick(category[chosenCategory], amount.toDouble())
-                        onCloseDialog()
-                    } else isError = true
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Dodaj")
-            }
-
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(48.dp)
-                .fillMaxHeight()
-                .weight(1f)
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp)
-            ) {
-                items(category) {
-                    Text(
-                        text = it.name,
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .clickable {
-                                chosenCategory = category.indexOf(it)
-                                categoryName = it.name
-                            }
-                    )
-                }
-            }
-        }
-    }
-
-}
 
 

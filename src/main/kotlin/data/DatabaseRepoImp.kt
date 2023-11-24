@@ -1,5 +1,6 @@
 package data
 
+import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.db.SqlDriver
@@ -39,7 +40,12 @@ class DatabaseRepoImp() : DatabaseRepository {
     override fun clearCategories() = database.categoryQueries.deleteAll()
 
     override fun clearLimits() = database.limitQueries.deleteAll()
-    
+
+    override fun alreadyExist(name: String): Boolean = database.categoryQueries.alreadyExist(name).executeAsOne()
+
+    override fun setVisible(name: String) = database.categoryQueries.setVisible(name)
+
+
     init {
         if (!File("database.db").exists()) {
             Database.Schema.create(driver)

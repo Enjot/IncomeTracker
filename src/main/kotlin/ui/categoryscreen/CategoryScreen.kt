@@ -14,42 +14,29 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ui.CategorySortType
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryScreen(
-    onItemClick: (String) -> Unit,
-    onAddButtonClick: (String) -> Unit,
-    onSortClick: (CategorySortType) -> Unit,
-    categories: List<MutableMap.MutableEntry<String, Pair<Int, Double>>>,
-    chosenSortType: CategorySortType
+    model: CategoryScreenModel
 ) {
+
+    val categories = model.categoriesSummary.collectAsState(emptyList())
     val stateVertical = rememberLazyGridState()
     var dialog by remember { mutableStateOf(false) }
     var showScrollbar by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    val arrowOrientation: Float by animateFloatAsState(
-        targetValue = if (expanded) 180F else 0F,
-        animationSpec = spring(
-            stiffness = 1000f
-        )
-    )
 
     Surface(
         modifier = Modifier
@@ -75,86 +62,10 @@ fun CategoryScreen(
                             .padding(vertical = 24.dp, horizontal = 36.dp)
                     ) {
                         val width = 200.dp
-                        Box {
-                            OutlinedTextField(
-                                value = chosenSortType.sortType,
-                                onValueChange = { },
-                                singleLine = true,
-                                readOnly = true,
-                                leadingIcon = {
-                                    Icon(
-                                        painterResource("drawable/icons/sorting.svg"),
-                                        contentDescription = null
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Rounded.ArrowDropDown,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .rotate(arrowOrientation)
-                                    )
-                                },
-                                modifier = Modifier
-                                    .width(width)
-
-                            )
-                            Spacer(
-                                modifier = Modifier
-                                    .width(width)
-                                    .height(56.dp)
-                                    .clickable { expanded = !expanded }
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.width(width)
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.NAME_INC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.NAME_INC)
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.NAME_DEC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.NAME_DEC)
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.SUM_INC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.SUM_INC)
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.SUM_DEC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.SUM_DEC)
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.AMOUNT_INC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.AMOUNT_INC)
-                                    expanded = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(CategorySortType.AMOUNT_DEC.sortType) },
-                                onClick = {
-                                    onSortClick(CategorySortType.AMOUNT_DEC)
-                                    expanded = false
-                                }
-                            )
-
-                        }
+                        CategorySortPicker(
+                            onSortClick = { type -> model.setSortType(type) },
+                            value = model.sortType.value.visibleName
+                        )
                     }
                 }
 
@@ -163,18 +74,18 @@ fun CategoryScreen(
                     columns = GridCells.Adaptive(250.dp),
                     state = stateVertical
                 ) {
-                    items(categories) {
+                    items(categories.value) { category ->
                         CategoryItem(
-                            onClick = onItemClick,
-                            name = it.key,
-                            spendingAmount = it.value.first,
-                            spendingSum = it.value.second
+                            { name -> model.delete(name) },
+                            name = category.key,
+                            spendingAmount = category.value.first,
+                            spendingSum = category.value.second,
+                            modifier = Modifier.animateItemPlacement()
                         )
                     }
                     item {
                         Spacer(modifier = Modifier.height(128.dp))
                     }
-
                 }
             }
             ExtendedFloatingActionButton(
@@ -216,7 +127,8 @@ fun CategoryScreen(
             if (dialog) {
                 AlertDialog(
                     onDismissRequest = { dialog = false },
-                    modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp).clip(RoundedCornerShape(24.dp))
+                    modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp)
+                        .clip(RoundedCornerShape(24.dp))
                 ) {
 
                     val focusRequester = remember { FocusRequester() }
@@ -256,7 +168,7 @@ fun CategoryScreen(
                             Spacer(modifier = Modifier.width(100.dp))
                             Button(
                                 onClick = {
-                                    onAddButtonClick(name)
+                                    model.insert(name)
                                     dialog = false
                                 }
                             ) {
@@ -277,42 +189,3 @@ fun CategoryScreen(
     }
 }
 
-@Composable
-fun CategoryItem(
-    onClick: (String) -> Unit,
-    name: String,
-    spendingAmount: Int,
-    spendingSum: Double,
-) {
-    Column(
-        modifier = Modifier
-            .width(200.dp)
-            .height(100.dp)
-            .padding(end = 36.dp)
-            .clickable { onClick(name) }
-    ) {
-        Text(
-            text = name,
-            fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(4.dp)
-        )
-        Text(
-            text = "łącznie wydano: %.2f zł".format(spendingSum),
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier
-                .padding(4.dp)
-        )
-        Text(
-            text = "ilość wydatków: $spendingAmount",
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.outline,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier
-                .padding(4.dp)
-        )
-    }
-}

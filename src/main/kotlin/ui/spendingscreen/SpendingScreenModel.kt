@@ -3,10 +3,10 @@ package ui.spendingscreen
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.sqldelight.Category
 import data.DatabaseRepository
+import data.DateFilter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import ui.DateFilter
 import java.time.LocalDate
 
 class SpendingScreenModel(

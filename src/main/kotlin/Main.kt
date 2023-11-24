@@ -31,13 +31,17 @@ import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import ui.categoryscreen.CategoryScreen
 import ui.categoryscreen.CategoryScreenModel
+import ui.chartscreen.ChartScreen
 import ui.chartscreen.ChartScreenModel
+import ui.limitscreen.LimitScreen
 import ui.limitscreen.LimitScreenModel
 import ui.spendingscreen.SpendingScreen
 import ui.spendingscreen.SpendingScreenModel
 import ui.theme.AppTheme
 import java.awt.Dimension
+
 
 val mainModule = module {
 
@@ -140,15 +144,15 @@ class HomeScreen : Screen {
                         }
 
                         Destination.CATEGORIES -> {
-                            KoinTestComposable(categoryScreenModel)
+                            CategoryScreen(categoryScreenModel)
                         }
 
                         Destination.LIMITS -> {
-                            KoinTestComposable(categoryScreenModel)
+                            LimitScreen(limitScreenModel)
                         }
 
                         Destination.CHARTS -> {
-                            KoinTestComposable(categoryScreenModel)
+                            ChartScreen(chartScreenModel)
                         }
 
                         Destination.SETTINGS -> {
@@ -209,3 +213,8 @@ fun KoinTestComposable(
     }
 
 }
+
+enum class Destination {
+    SPENDINGS,CATEGORIES, LIMITS, CHARTS, SETTINGS
+}
+

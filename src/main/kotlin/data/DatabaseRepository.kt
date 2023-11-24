@@ -4,6 +4,7 @@ import com.example.sqldelight.Category
 import com.example.sqldelight.LimitOfCategory
 import com.example.sqldelight.Spending
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 interface DatabaseRepository {
 
@@ -24,10 +25,19 @@ interface DatabaseRepository {
     fun clearSpendings()
     fun clearCategories()
     fun clearLimits()
+
+    fun alreadyExist(name: String): Boolean
+    fun setVisible(name: String)
 }
 
 data class DatabaseTables(
     var spendings: Flow<List<Spending>>,
     var categories: Flow<List<Category>>,
     var limits: Flow<List<LimitOfCategory>>
+)
+
+data class DateFilter(
+    var selectedMonth: Int = LocalDate.now().month.value,
+    var selectedYear: Int = LocalDate.now().year,
+    var isFiltered: Boolean = false,
 )
