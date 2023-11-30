@@ -4,8 +4,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @Composable
 fun LimitDatePicker(
@@ -44,7 +46,14 @@ fun LimitDatePicker(
     var currentMonth by remember { mutableStateOf(monthNames[selectedMonth - 1]) }
     var currentYear by remember { mutableStateOf(selectedYear) }
 
-    val scrollState = rememberScrollState(3300)
+    val lazyColumnState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(yearExpanded) {
+        coroutineScope.launch {
+            lazyColumnState.scrollToItem(years.indexOf(selectedYear) - 5)
+        }
+    }
+    
     Row {
         Box(
             modifier = modifier
@@ -143,10 +152,11 @@ fun LimitDatePicker(
                 onDismissRequest = { yearExpanded = false },
                 modifier = Modifier.width(yearWidth).padding()
             ) {
-                Column(
-                    modifier = Modifier.height(700.dp).verticalScroll(scrollState)
+                LazyColumn(
+                    state = lazyColumnState,
+                    modifier = Modifier.width(yearWidth).height(520.dp)
                 ) {
-                    years.forEach { year ->
+                    items(items = years.toList()) { year ->
                         DropdownMenuItem(
                             text = {
                                 Text(

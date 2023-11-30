@@ -68,7 +68,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication, title = "Expense Tracker", state = state, resizable = true
     ) {
         window.minimumSize = Dimension(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
-        AppTheme() {
+        AppTheme {
             Navigator(HomeScreen())
         }
     }
