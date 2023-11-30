@@ -56,9 +56,9 @@ fun SpendingScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Zarządzaj wydatkami",
+                        text = "Codzienne wydatki",
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.weight(1f).clickable { }
+                        modifier = Modifier.weight(1f)
                     )
                     // Had to wrap it in Box for normal dropdown menu behaviour
                     Box(

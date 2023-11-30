@@ -55,21 +55,23 @@ val mainModule = module {
     factory { ChartScreenModel(get()) }
 }
 
-fun main() = application {
+fun main()  {
 
     startKoin {
         modules(mainModule)
     }
 
-    val state = rememberWindowState(
-        width = WINDOW_INITIAL_WIDTH.dp, height = WINDOW_INITIAL_HEIGHT.dp, position = WindowPosition(Alignment.Center)
-    )
-    Window(
-        onCloseRequest = ::exitApplication, title = "Expense Tracker", state = state, resizable = true
-    ) {
-        window.minimumSize = Dimension(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
-        AppTheme {
-            Navigator(HomeScreen())
+    application {
+        val state = rememberWindowState(
+            width = WINDOW_INITIAL_WIDTH.dp, height = WINDOW_INITIAL_HEIGHT.dp, position = WindowPosition(Alignment.Center)
+        )
+        Window(
+            onCloseRequest = ::exitApplication, title = "Expense Tracker", state = state, resizable = true
+        ) {
+            window.minimumSize = Dimension(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
+            AppTheme {
+                Navigator(HomeScreen())
+            }
         }
     }
 }
@@ -124,7 +126,7 @@ class HomeScreen : Screen {
                     SingleNavigationRailItem(
                         selected = currentDestination == Destination.SETTINGS,
                         onClick = { currentDestination = Destination.SETTINGS },
-                        text = "Kategorie",
+                        text = "Ustawienia",
                         selectedIcon = painterResource("drawable/icons/settingsFilled.svg"),
                         unselectedIcon = painterResource("drawable/icons/settings.svg")
                     )

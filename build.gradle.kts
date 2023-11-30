@@ -49,7 +49,7 @@ compose.desktop {
         nativeDistributions {
             
             modules("java.sql")
-            targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "IncomeTracker"
             packageVersion = "1.0.0"
         }

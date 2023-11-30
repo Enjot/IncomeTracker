@@ -1,8 +1,6 @@
 package ui.categoryscreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
@@ -52,9 +50,9 @@ fun CategoryScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Zarządzaj kategoriami",
+                        text = "Kategorie",
                         style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.weight(1f).clickable {}
+                        modifier = Modifier.weight(1f)
                     )
                     Box(
                         modifier = Modifier
