@@ -22,13 +22,12 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
     
-    
     // JSystem Theme Detector
     implementation ("com.github.Dansoftowner:jSystemThemeDetector:3.8")
     
     // Voyager
-    implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc08")
-    implementation("cafe.adriel.voyager:voyager-koin:1.0.0-rc08")
+    implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc10")
+    implementation("cafe.adriel.voyager:voyager-koin:1.0.0-rc10")
     
     // SQLDelight
     implementation("app.cash.sqldelight:sqlite-driver:2.0.0")
@@ -43,6 +42,7 @@ dependencies {
 }
 
 compose.desktop {
+    
     application {
         mainClass = "MainKt"
 
@@ -53,6 +53,7 @@ compose.desktop {
             packageName = "IncomeTracker"
             packageVersion = "1.0.0"
         }
+        
     }
 }
 

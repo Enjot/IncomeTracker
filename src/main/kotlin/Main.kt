@@ -191,9 +191,13 @@ fun SingleNavigationRailItem(
                 contentDescription = null,
             )
         },
+        colors = NavigationRailItemDefaults.colors(
+            indicatorColor = MaterialTheme.colorScheme.onSecondary
+        ),
         modifier = modifier.padding(vertical = 12.dp).graphicsLayer(scaleX = alpha, scaleY = alpha)
             .onPointerEvent(PointerEventType.Press) { pressed = false }
-            .onPointerEvent(PointerEventType.Release) { pressed = true })
+            .onPointerEvent(PointerEventType.Release) { pressed = true }
+    )
 }
 
 
