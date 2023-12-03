@@ -49,6 +49,10 @@ class SpendingScreenModel(
         repository.insertSpending(name, amount, category, date)
     }
 
+    fun edit(id: Long,name: String,amount: Double){
+        repository.editSpending(id, name, amount)
+    }
+
     fun delete(id: Long) = repository.deleteSpending(id)
     fun setSortType(type: SpendingSortType) {
         sortType.value = type

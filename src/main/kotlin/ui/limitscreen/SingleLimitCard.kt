@@ -1,19 +1,22 @@
 package ui.limitscreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleLimitCard(
+    onEditClick: (String, Double, String) -> Unit,
+    onDeleteClick: (String, String) -> Unit,
     item: CurrentLimit
 ) {
 
@@ -21,11 +24,13 @@ fun SingleLimitCard(
     val progressColor =
         if (ratio < 0.9f) MaterialTheme.colorScheme.primary
         else MaterialTheme.colorScheme.error
+    var editDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp)
+            .clickable { editDialog = true }
     ) {
         Column {
             Row(
@@ -78,5 +83,23 @@ fun SingleLimitCard(
             }
         }
 
+    }
+
+    if (editDialog) {
+        AlertDialog(
+            onDismissRequest = { editDialog = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            ),
+            modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp)
+                .clip(RoundedCornerShape(24.dp))
+        ) {
+            EditLimit(
+                { name, amount, date -> onEditClick(name, amount, date) },
+                { name, date -> onDeleteClick(name, date) },
+                { editDialog = !editDialog },
+                item
+            )
+        }
     }
 }

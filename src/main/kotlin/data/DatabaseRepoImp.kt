@@ -26,6 +26,10 @@ class DatabaseRepoImp() : DatabaseRepository {
 
     override fun deleteSpending(id: Long) = database.spendingQueries.delete(id)
 
+    override fun editSpending(id: Long, name: String, amount: Double) =
+        database.spendingQueries.update(name, amount, id)
+
+
     override fun insertCategory(name: String) = database.categoryQueries.insert(name)
 
     override fun deleteCategory(name: String) = database.categoryQueries.setHidden(name)
@@ -33,7 +37,12 @@ class DatabaseRepoImp() : DatabaseRepository {
     override fun insertLimit(category: Category, amount: Double, date: String) =
         database.limitQueries.insert(category.name, date, amount)
 
-    override fun deleteLimit(id: Long) = database.limitQueries.delete(id)
+    override fun editLimit(name: String, amount: Double, date: String) =
+        database.limitQueries.update(amount, name, date)
+
+
+    override fun deleteLimit(name: String, date: String) = database.limitQueries.delete(name, date)
+
     override fun clearSpendings() = database.spendingQueries.deleteAll()
 
     override fun clearCategories() = database.categoryQueries.deleteAll()

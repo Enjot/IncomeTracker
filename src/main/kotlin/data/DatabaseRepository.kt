@@ -14,13 +14,17 @@ interface DatabaseRepository {
 
     fun deleteSpending(id: Long)
 
+    fun editSpending(id: Long, name: String, amount: Double)
+
     fun insertCategory(name: String)
 
     fun deleteCategory(name: String)
 
     fun insertLimit(category: Category, amount: Double, date: String)
 
-    fun deleteLimit(id: Long)
+    fun deleteLimit(name: String, date: String)
+
+    fun editLimit(name: String,amount: Double, date: String)
 
     fun clearSpendings()
     fun clearCategories()

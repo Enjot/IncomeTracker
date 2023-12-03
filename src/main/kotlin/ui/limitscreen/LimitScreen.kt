@@ -71,7 +71,21 @@ fun LimitScreen(
                             .weight(6f)
                     ) {
                         items(limit.value){
-                            SingleLimitCard(it)
+                            SingleLimitCard(
+                                {name, amount, date ->
+                                    model.update(
+                                        name,
+                                        amount,
+                                        date
+                                    )
+                                },
+                                { name, date ->
+                                    model.delete(
+                                        name,
+                                        date)
+                                },
+                                it
+                            )
                         }
                         item { Spacer(modifier = Modifier.height(128.dp)) }
                     }

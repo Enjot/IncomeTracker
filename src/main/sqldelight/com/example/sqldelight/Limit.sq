@@ -16,7 +16,13 @@ VALUES (?,?,?);
 
 delete:
 DELETE FROM limitOfCategory
-WHERE id = ?;
+WHERE category = ? AND date = ?;
 
 deleteAll:
 DELETE FROM limitOfCategory;
+
+update:
+UPDATE limitOfCategory
+SET
+    limitAmount =?
+WHERE category = ? AND date = ?;

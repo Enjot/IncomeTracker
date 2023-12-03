@@ -50,6 +50,14 @@ class LimitScreenModel(
         repository.insertLimit(category, amount, date)
     }
 
+    fun update(categoryName: String, amount: Double, date: String){
+        repository.editLimit(categoryName, amount, date)
+    }
+
+    fun delete(categoryName: String, date: String){
+        repository.deleteLimit(categoryName, date)
+    }
+
     fun setFilter(month: Int, year: Int, isFiltered: Boolean){
         filter.value = DateFilter(month,year,isFiltered)
     }

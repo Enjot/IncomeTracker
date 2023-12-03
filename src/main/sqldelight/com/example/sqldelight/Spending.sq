@@ -29,3 +29,10 @@ WHERE id = ?;
 
 deleteAll:
 DELETE FROM spending;
+
+update:
+UPDATE spending
+SET
+    name = ?,
+    amount = ?
+WHERE id = ?;

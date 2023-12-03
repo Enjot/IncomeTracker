@@ -3,37 +3,45 @@ package ui.spendingscreen
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.example.sqldelight.Spending
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SingleSpendingItem(
-    onItemClick: (Long) -> Unit,
+    onEditClick: (Long, String, Double) -> Unit,
+    onDeleteClick: (Long) -> Unit,
     item: Spending,
     modifier: Modifier = Modifier
 ) {
     var enabled by remember { mutableStateOf(true) }
     val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.95f)
-    
+    var editDialog by remember { mutableStateOf(false) }
+
+
     Row(
         modifier = modifier
             .width(300.dp)
             .height(90.dp)
             .graphicsLayer(scaleX = alpha, scaleY = alpha)
             .padding(end = 36.dp)
-            .clickable { onItemClick(item.id) }
+            .clickable { editDialog = true }
             .onPointerEvent(PointerEventType.Press) { enabled = false }
             .onPointerEvent(PointerEventType.Release) { enabled = true }
     ) {
@@ -77,6 +85,24 @@ fun SingleSpendingItem(
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
                     .align(Alignment.End)
+            )
+        }
+    }
+
+    if (editDialog) {
+        AlertDialog(
+            onDismissRequest = { editDialog = false },
+//            properties = DialogProperties(
+//                usePlatformDefaultWidth = false
+//            ),
+            modifier = Modifier.wrapContentHeight().padding(vertical = 24.dp)
+                .clip(RoundedCornerShape(24.dp))
+        ) {
+            EditSpending(
+                { id, name, amount -> onEditClick(id,name,amount) },
+                { id -> onDeleteClick(id) },
+                { editDialog = !editDialog },
+                item
             )
         }
     }

@@ -40,13 +40,14 @@ fun SpendingScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
-    
+    var editingSpending by remember { mutableStateOf(false) }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
-        
+
     ) {
         Box(modifier = Modifier.padding(start = 36.dp)) {
             Column {
@@ -89,11 +90,23 @@ fun SpendingScreen(
                     columns = GridCells.Adaptive(300.dp),
                     state = stateVertical,
                 ) {
-                    items(spendings.value, key = { it.id } ) { spending ->
+                    items(spendings.value, key = { it.id }) { spending ->
                         SingleSpendingItem(
-                            { id -> model.delete(id) },
+                            { id, name, amount ->
+                                model.edit(
+                                    id,
+                                    name,
+                                    amount
+
+                                )
+                            },
+                            { id ->
+                                model.delete(id)
+                            },
                             spending,
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier
+                                .animateItemPlacement()
+
                         )
                     }
                     item {
@@ -174,7 +187,7 @@ fun SpendingScreen(
             var selectedMonth by remember { mutableStateOf(model.filterByDate.value.selectedMonth) }
             var selectedYear by remember { mutableStateOf(model.filterByDate.value.selectedYear) }
             var isFiltered by remember { mutableStateOf(model.filterByDate.value.isFiltered) }
-            
+
             Column {
                 DateFilterSelector(
                     monthsNames = monthNames,
@@ -240,7 +253,7 @@ fun SpendingScreen(
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 if (!sheetState.isVisible) showBottomSheet = false
                             }
-                            
+
                         },
                         modifier = Modifier.padding(24.dp)
                     ) {
