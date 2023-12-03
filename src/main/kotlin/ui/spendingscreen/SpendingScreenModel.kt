@@ -3,6 +3,7 @@ package ui.spendingscreen
 import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.sqldelight.Category
+import com.example.sqldelight.Spending
 import data.DatabaseRepository
 import data.DateFilter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ class SpendingScreenModel(
 
     val spendings = combine(
         repository.tables.spendings, sortType, filterByCategory, filterByDate
-    ) { spendings, sortType, categoryFilter, dateFilter ->
+    ) { spendings, sortType, categoryFilter, filter ->
         var sortedFilteredSpendings = when (sortType) {
             SpendingSortType.AMOUNT_INC -> spendings.sortedBy { it.amount }
             SpendingSortType.AMOUNT_DEC -> spendings.sortedBy { it.amount }.reversed()
@@ -37,10 +38,17 @@ class SpendingScreenModel(
             sortedFilteredSpendings =
                 sortedFilteredSpendings.filter { spending -> spending.category == categoryFilter }
         }
-        return@combine when (dateFilter.isFiltered) {
+        val singleDigitMonthFilterLogic: (Spending, Int) -> Boolean = { spending, month ->
+            spending.date.startsWith("${filter.selectedYear}-0$month")
+        }
+        return@combine when (filter.isFiltered) {
             false -> sortedFilteredSpendings
-            true -> sortedFilteredSpendings.filter {
-                it.date.startsWith("${dateFilter.selectedYear}-${dateFilter.selectedMonth}")
+            true -> sortedFilteredSpendings.filter { spending ->
+                if (filter.selectedMonth in 0..9) {
+                    singleDigitMonthFilterLogic(spending, filter.selectedMonth)
+                } else {
+                    spending.date.startsWith("${filter.selectedYear}-${filter.selectedMonth}")
+                }
             }
         }
     }
