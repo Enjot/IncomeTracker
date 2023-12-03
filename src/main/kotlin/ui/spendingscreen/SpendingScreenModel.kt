@@ -1,5 +1,6 @@
 package ui.spendingscreen
 
+import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.sqldelight.Category
 import data.DatabaseRepository
@@ -66,29 +67,31 @@ class SpendingScreenModel(
     }
     
     init {
-        repository.clearSpendings()
-        insert("Buty", 170.0, Category("Moda", 1), "2023-11-16")
-        insert("Pasta do zębów", 170.0, Category("Zdrowie", 1), "2023-11-20")
-        insert("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 1), "2023-07-16")
-        insert("Red Dead Redemption 2", 149.0, Category("Gry komputerowe", 1), "2023-08-15")
-        insert("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 1), "2023-07-16")
-        insert("Kindle Paperwhite 5", 550.0, Category("Elektronika", 1), "2023-07-16")
-        insert("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 1), "2023-11-05")
-        insert("Tesla", 864.0, Category("Akcje giełdowe", 1), "2023-10-05")
-        insert("Mieszkanie", 2700.0, Category("Mieszkanie", 1), "2023-10-01")
-        insert("Netflix", 56.0, Category("Subskrybcje", 1), "2023-08-25")
-        insert("Tidal", 30.0, Category("Subskrybcje", 1), "2023-11-01")
-        insert("Spotify", 20.0, Category("Subskrybcje", 1), "2023-10-01")
-        insert("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 1), "2023-09-17")
-        insert("Uber", 23.0, Category("Transport", 1), "2023-09-21")
-        insert("Bolt", 19.0, Category("Transport", 1), "2023-09-22")
-        insert("RP Points", 100.0, Category("Gry komputerowe", 1), "2023-11-13")
-        insert("Elmex", 11.0, Category("Uroda", 1), "2023-11-03")
-        insert("Rutinoscorbin", 9.0, Category("Leki", 1), "2023-11-11")
-        insert("Eurobiznes", 49.0, Category("Gry planszowe", 1), "2023-09-12")
-        insert("Kendrick Lamar - Mr. Morale & the Big Steppers", 53.0, Category("Płyty CD", 1), "2023-08-22")
-        insert("J. Cole - The Off-Season", 113.0, Category("Płyty CD", 1), "2023-09-30")
-        insert("Eminem - Kamikaze", 78.0, Category("Płyty CD", 1), "2023-09-01")
+        if (CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA) {
+            repository.clearSpendings()
+            insert("Buty", 170.0, Category("Moda", 1), "2023-11-16")
+            insert("Pasta do zębów", 170.0, Category("Zdrowie", 1), "2023-11-20")
+            insert("Cyberpunk 2077", 156.99, Category("Gry komputerowe", 1), "2023-12-16")
+            insert("Red Dead Redemption 2", 149.0, Category("Gry komputerowe", 1), "2023-08-15")
+            insert("AMD Ryzen 7700X", 1459.0, Category("Części do komputera", 1), "2023-12-16")
+            insert("Kindle Paperwhite 5", 550.0, Category("Elektronika", 1), "2023-12-16")
+            insert("Apple iPhone 15 Pro Max 1TB", 9599.0, Category("Elektronika", 1), "2023-11-05")
+            insert("Tesla", 864.0, Category("Akcje giełdowe", 1), "2023-10-05")
+            insert("Mieszkanie", 2700.0, Category("Mieszkanie", 1), "2023-10-01")
+            insert("Netflix", 56.0, Category("Subskrybcje", 1), "2023-08-25")
+            insert("Tidal", 30.0, Category("Subskrybcje", 1), "2023-11-01")
+            insert("Spotify", 20.0, Category("Subskrybcje", 1), "2023-10-01")
+            insert("Java 17 Masterclass by Tim Buchalka", 54.99, Category("Kursy", 1), "2023-09-17")
+            insert("Uber", 23.0, Category("Transport", 1), "2023-09-21")
+            insert("Bolt", 19.0, Category("Transport", 1), "2023-09-22")
+            insert("RP Points", 100.0, Category("Gry komputerowe", 1), "2023-11-13")
+            insert("Elmex", 11.0, Category("Uroda", 1), "2023-11-03")
+            insert("Rutinoscorbin", 9.0, Category("Leki", 1), "2023-11-11")
+            insert("Eurobiznes", 49.0, Category("Gry planszowe", 1), "2023-09-12")
+            insert("Kendrick Lamar - Mr. Morale & the Big Steppers", 53.0, Category("Płyty CD", 1), "2023-08-22")
+            insert("J. Cole - The Off-Season", 113.0, Category("Płyty CD", 1), "2023-09-30")
+            insert("Eminem - Kamikaze", 78.0, Category("Płyty CD", 1), "2023-09-01")
+        }
     }
 }
 

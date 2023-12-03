@@ -1,5 +1,6 @@
 package ui.limitscreen
 
+import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.example.sqldelight.Category
 import data.DatabaseRepository
@@ -15,7 +16,7 @@ class LimitScreenModel(
     private var _limits = repository.tables.limits
     val categories = repository.tables.categories
 
-    var filter = MutableStateFlow(DateFilter())
+    var filter = MutableStateFlow(DateFilter(isFiltered = true))
 
     var limits = combine(repository.tables.spendings, _limits, filter) { spendings, limits, filter ->
         val listOfCurrentLimits: MutableList<CurrentLimit> = mutableListOf()
@@ -55,15 +56,16 @@ class LimitScreenModel(
 
 
     init {
-        repository.clearLimits()
-
-        insert(Category("Subskrybcje", 1), 100.0, "2023-11")
-        insert(Category("Subskrybcje", 1), 50.0, "2023-10")
-        insert(Category("Elektronika", 1), 300.0, "2023-11")
-        insert(Category("Transport", 1), 200.0, "2023-11")
-        insert(Category("Gry komputerowe", 1), 300.0, "2023-09")
-        insert(Category("Płyty CD", 1), 250.0, "2023-09")
-        insert(Category("Części do komputera", 1), 7000.0, "2023-07")
+        if (CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA) {
+            repository.clearLimits()
+            insert(Category("Subskrybcje", 1), 100.0, "2023-11")
+            insert(Category("Subskrybcje", 1), 50.0, "2023-10")
+            insert(Category("Elektronika", 1), 300.0, "2023-11")
+            insert(Category("Transport", 1), 200.0, "2023-11")
+            insert(Category("Gry komputerowe", 1), 300.0, "2023-09")
+            insert(Category("Płyty CD", 1), 250.0, "2023-09")
+            insert(Category("Części do komputera", 1), 7000.0, "2023-12")
+        }
     }
 }
 

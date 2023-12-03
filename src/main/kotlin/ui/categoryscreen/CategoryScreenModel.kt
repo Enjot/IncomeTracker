@@ -1,5 +1,6 @@
 package ui.categoryscreen
 
+import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
 import data.DatabaseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,32 +63,34 @@ class CategoryScreenModel(
     }
 
     init {
-        repository.clearCategories()
-        insert("Produkty spożywcze")
-        insert("Transport")
-        insert("Rachunki")
-        insert("Elektronika")
-        insert("Kursy")
-        insert("Leki")
-        insert("Moda")
-        insert("Subskrybcje")
-        insert("Uroda")
-        insert("Karma")
-        insert("Dom i ogród")
-        insert("Fast foody")
-        insert("Utrzymanie auta")
-        insert("Gry komputerowe")
-        insert("Gry planszowe")
-        insert("Remonty")
-        insert("Mieszkanie")
-        insert("Części do komputera")
-        insert("Akcje giełdowe")
-        insert("Czesne")
-        insert("Chemia")
-        insert("Remonty")
-        insert("Płyty CD")
-        insert("Mieszkanie")
-        insert("Zdrowie")
+        if (CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA) {
+            repository.clearCategories()
+            insert("Produkty spożywcze")
+            insert("Transport")
+            insert("Rachunki")
+            insert("Elektronika")
+            insert("Kursy")
+            insert("Leki")
+            insert("Moda")
+            insert("Subskrybcje")
+            insert("Uroda")
+            insert("Karma")
+            insert("Dom i ogród")
+            insert("Fast foody")
+            insert("Utrzymanie auta")
+            insert("Gry komputerowe")
+            insert("Gry planszowe")
+            insert("Remonty")
+            insert("Mieszkanie")
+            insert("Części do komputera")
+            insert("Akcje giełdowe")
+            insert("Czesne")
+            insert("Chemia")
+            insert("Remonty")
+            insert("Płyty CD")
+            insert("Mieszkanie")
+            insert("Zdrowie")
+        }
     }
 }
 
