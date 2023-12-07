@@ -1,4 +1,4 @@
-package ui.utils
+package ui.limitscreen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring

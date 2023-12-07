@@ -1,17 +1,14 @@
 package ui.spendingscreen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
-import ui.utils.monthNames
+import ui.limitscreen.monthNames
+import ui.utils.AddButton
+import ui.utils.ScreenContent
+import ui.utils.Scrollbar
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
@@ -42,138 +42,112 @@ fun SpendingScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var editingSpending by remember { mutableStateOf(false) }
 
-    Surface(
+    ScreenContent(
         modifier = Modifier
-            .fillMaxSize()
             .onPointerEvent(PointerEventType.Enter) { showScrollbar = true }
             .onPointerEvent(PointerEventType.Exit) { showScrollbar = false }
 
     ) {
-        Box(modifier = Modifier.padding(start = 36.dp)) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Codzienne wydatki",
+                    style = MaterialTheme.typography.displayLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                // Had to wrap it in Box for normal dropdown menu behaviour
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .padding(24.dp)
                 ) {
-                    Text(
-                        text = "Codzienne wydatki",
-                        style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.weight(1f)
+                    SortPicker(
+                        onSortClick = { type -> model.setSortType(type) },
+                        value = model.sortType.value.visibleName,
                     )
-                    // Had to wrap it in Box for normal dropdown menu behaviour
-                    Box(
-                        modifier = Modifier
-                            .padding(24.dp)
-                    ) {
-                        SortPicker(
-                            onSortClick = { type -> model.setSortType(type) },
-                            value = model.sortType.value.visibleName,
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = { showBottomSheet = !showBottomSheet },
-                        modifier = Modifier
-                            .wrapContentSize(Alignment.BottomEnd)
-                            .padding(top = 24.dp, bottom = 24.dp, end = 36.dp)
-                    ) {
-                        Text("Filtruj")
-                        Spacer(modifier = Modifier.width(24.dp))
-                        Icon(
-                            painterResource("drawable/icons/filter.svg"),
-                            contentDescription = null
-                        )
-                    }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(300.dp),
-                    state = stateVertical,
+                OutlinedButton(
+                    onClick = { showBottomSheet = !showBottomSheet },
+                    modifier = Modifier
+                        .wrapContentSize(Alignment.BottomEnd)
+                        .padding(top = 24.dp, bottom = 24.dp, end = 36.dp)
                 ) {
-                    items(spendings.value, key = { it.id }) { spending ->
-                        SingleSpendingItem(
-                            { id, name, amount ->
-                                model.edit(
-                                    id,
-                                    name,
-                                    amount
-
-                                )
-                            },
-                            { id ->
-                                model.delete(id)
-                            },
-                            spending,
-                            modifier = Modifier
-                                .animateItemPlacement()
-
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(128.dp))
-                    }
-                }
-            }
-            ExtendedFloatingActionButton(
-                text = { Text("Dodaj wydatek") },
-                icon = {
+                    Text("Filtruj")
+                    Spacer(modifier = Modifier.width(24.dp))
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        painterResource("drawable/icons/filter.svg"),
                         contentDescription = null
                     )
-                },
-                onClick = { dialog = true },
-                expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(48.dp)
-            )
-            AnimatedVisibility(
-                visible = showScrollbar,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(300.dp),
+                state = stateVertical,
             ) {
-                VerticalScrollbar(
-                    adapter = rememberScrollbarAdapter(stateVertical),
-                    style = ScrollbarStyle(
-                        minimalHeight = 16.dp,
-                        thickness = 8.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        hoverDurationMillis = 300,
-                        unhoverColor = MaterialTheme.colorScheme.outlineVariant,
-                        hoverColor = MaterialTheme.colorScheme.outline
-                    ),
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .wrapContentHeight()
-                )
+                items(spendings.value, key = { it.id }) { spending ->
+                    SingleSpendingItem(
+                        { id, name, amount ->
+                            model.edit(
+                                id,
+                                name,
+                                amount
+
+                            )
+                        },
+                        { id ->
+                            model.delete(id)
+                        },
+                        spending,
+                        modifier = Modifier
+                            .animateItemPlacement()
+
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(128.dp))
+                }
             }
         }
-        if (dialog) {
-            AlertDialog(
-                onDismissRequest = { dialog = false },
-                properties = DialogProperties(
-                    usePlatformDefaultWidth = false
-                ),
-                modifier = Modifier
-                    .width(1000.dp)
-                    .padding(vertical = 24.dp)
-                    .clip(RoundedCornerShape(24.dp))
-            ) {
-                AddSpending(
-                    { name, amount, category ->
-                        model.insert(
-                            name,
-                            amount,
-                            category
-                        )
-                    },
-                    { dialog = !dialog },
-                    categories.value
-                )
-            }
+        AddButton(
+            text = "Dodaj wydatek",
+            expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
+            onClick = { dialog = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(48.dp)
+        )
+        Scrollbar(
+            showScrollbar,
+            rememberScrollbarAdapter(stateVertical),
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
+    if (dialog) {
+        AlertDialog(
+            onDismissRequest = { dialog = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            ),
+            modifier = Modifier
+                .width(1000.dp)
+                .padding(vertical = 24.dp)
+                .clip(RoundedCornerShape(24.dp))
+        ) {
+            AddSpending(
+                { name, amount, category ->
+                    model.insert(
+                        name,
+                        amount,
+                        category
+                    )
+                },
+                { dialog = !dialog },
+                categories.value
+            )
         }
     }
     if (showBottomSheet) {

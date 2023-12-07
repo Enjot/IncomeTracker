@@ -3,7 +3,6 @@ package ui.chartscreen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,7 +21,8 @@ import com.aay.compose.lineChart.LineChart
 import com.aay.compose.lineChart.model.LineParameters
 import com.aay.compose.lineChart.model.LineType
 import data.DateFilter
-import ui.utils.LimitDatePicker
+import ui.limitscreen.LimitDatePicker
+import ui.utils.ScreenContent
 import kotlin.random.Random
 
 
@@ -32,44 +32,39 @@ fun ChartScreen(
 ) {
     val monthStatistic = model.currentMonthStatstics.collectAsState(emptyMap<String, Double>())
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(modifier = Modifier.padding(start = 36.dp)) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+    ScreenContent {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Statystyki",
+                    style = MaterialTheme.typography.displayLarge,
+                    modifier = Modifier.weight(1f).clickable { }
+                )
+                Box(
+                    modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
                 ) {
-                    Text(
-                        text = "Statystyki",
-                        style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.weight(1f).clickable { }
+                    LimitDatePicker(
+                        selectedMonth = model.filter.value.selectedMonth,
+                        selectedYear = model.filter.value.selectedYear,
+                        onClick = { month, year -> model.setFilter(month, year) },
                     )
-                    Box(
-                        modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
-                    ) {
-                        LimitDatePicker(
-                            selectedMonth = model.filter.value.selectedMonth,
-                            selectedYear = model.filter.value.selectedYear,
-                            onClick = { month, year -> model.setFilter(month, year) },
-                        )
-                    }
                 }
-                Row {
+            }
+            Row {
 
-                    Column(modifier = Modifier.padding(end = 36.dp).weight(1f)) {
-                        BarChartSample(monthStatistic.value, model.filter.value)
-                    }
+                Column(modifier = Modifier.padding(end = 36.dp).weight(1f)) {
+                    BarChartSample(monthStatistic.value, model.filter.value)
+                }
 //                    Column(modifier = Modifier.padding(end = 36.dp).weight(1f)) {
 //                        LineChartSample()
 //                    }
 
-                }
             }
         }
     }
-
 }
 
 

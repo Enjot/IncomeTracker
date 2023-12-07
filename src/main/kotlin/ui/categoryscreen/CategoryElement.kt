@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun CategoryItem(
+fun CategoryElement(
     onClick: (String) -> Unit,
     name: String,
     spendingAmount: Int,
@@ -30,7 +30,7 @@ fun CategoryItem(
     val alpha: Float by animateFloatAsState(if (enabled) 1f else 0.95f)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(200.dp)
             .height(100.dp)
             .graphicsLayer(scaleX = alpha, scaleY = alpha)
