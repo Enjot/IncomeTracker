@@ -33,13 +33,13 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import ui.categoryscreen.CategoryScreen
-import ui.categoryscreen.CategoryScreenModel
+import data.ViewModels.CategoryScreenModel
 import ui.chartscreen.ChartScreen
-import ui.chartscreen.ChartScreenModel
+import data.ViewModels.ChartScreenModel
 import ui.limitscreen.LimitScreen
-import ui.limitscreen.LimitScreenModel
+import data.ViewModels.LimitScreenModel
 import ui.spendingscreen.SpendingScreen
-import ui.spendingscreen.SpendingScreenModel
+import data.ViewModels.SpendingScreenModel
 import ui.theme.AppTheme
 import java.awt.Dimension
 
@@ -124,13 +124,13 @@ class HomeScreen : Screen {
                         selectedIcon = painterResource("drawable/icons/chartsFilled.svg"),
                         unselectedIcon = painterResource("drawable/icons/charts.svg")
                     )
-                    SingleNavigationRailItem(
-                        selected = currentDestination == Destination.SETTINGS,
-                        onClick = { currentDestination = Destination.SETTINGS },
-                        text = "Ustawienia",
-                        selectedIcon = painterResource("drawable/icons/settingsFilled.svg"),
-                        unselectedIcon = painterResource("drawable/icons/settings.svg")
-                    )
+//                    SingleNavigationRailItem(
+//                        selected = currentDestination == Destination.SETTINGS,
+//                        onClick = { currentDestination = Destination.SETTINGS },
+//                        text = "Ustawienia",
+//                        selectedIcon = painterResource("drawable/icons/settingsFilled.svg"),
+//                        unselectedIcon = painterResource("drawable/icons/settings.svg")
+//                    )
                 }
                 AnimatedContent(
                     targetState = currentDestination,

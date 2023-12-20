@@ -1,5 +1,6 @@
 package ui.spendingscreen
 
+import data.ViewModels.SpendingSortType
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable

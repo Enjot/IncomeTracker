@@ -8,4 +8,12 @@ object Validator {
             false
         }
     }
+
+    fun isEmptyString(enteredValue: String): Boolean {
+        return if (enteredValue.isEmpty()){
+            false
+        }else{
+            true
+        }
+    }
 }

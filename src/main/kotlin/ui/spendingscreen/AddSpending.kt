@@ -1,5 +1,6 @@
 package ui.spendingscreen
 
+import Validator
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -7,14 +8,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.sqldelight.Category
 
 @Composable
@@ -28,6 +28,8 @@ fun AddSpending(
     var amount by remember { mutableStateOf("") }
     var categoryName by remember { mutableStateOf("Wybierz kategorię") }
     var chosenCategory by remember { mutableStateOf(0) }
+    var isAmountValid by remember { mutableStateOf(true) }
+    var isNameValid by remember { mutableStateOf(true) }
 
     Row {
         Column(
@@ -49,6 +51,20 @@ fun AddSpending(
                 value = name,
                 label = { Text("Nazwa") },
                 onValueChange = { name = it },
+                isError = !isNameValid,
+                supportingText = {if (!isNameValid) {
+                    Row{
+                        Icon(
+                            painterResource("drawable/icons/error.svg"),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            "Nieprawidłowa nazwa",
+                            fontSize = 16.sp
+                        )
+                    }
+                } else null},
                 modifier = Modifier
                     .padding(12.dp)
                     .focusable()
@@ -72,6 +88,20 @@ fun AddSpending(
                 value = amount,
                 label = { Text("Kwota") },
                 onValueChange = { amount = it },
+                isError = !isAmountValid,
+                supportingText = {if (!isAmountValid) {
+                    Row{
+                        Icon(
+                            painterResource("drawable/icons/error.svg"),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            "Nieprawidłowa kwota",
+                            fontSize = 16.sp
+                        )
+                    }
+                } else null},
                 modifier = Modifier
                     .padding(12.dp)
                     .focusable()
@@ -80,8 +110,18 @@ fun AddSpending(
             Spacer(modifier = Modifier.height(36.dp))
             Button(
                 onClick = {
-                    onAddClick(name, amount.toDouble(), category[chosenCategory])
-                    run { onCloseDialog() }
+                    when {
+                        Validator.isValidAmount(amount) -> isAmountValid = true
+                        !Validator.isValidAmount(amount) -> isAmountValid = false
+                    }
+                    when {
+                        Validator.isEmptyString(name) -> isNameValid = true
+                        !Validator.isEmptyString(name) -> isNameValid = false
+                    }
+                    if (isNameValid && isAmountValid) {
+                        onAddClick(name, amount.toDouble(), category[chosenCategory])
+                        run { onCloseDialog() }
+                    }
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {

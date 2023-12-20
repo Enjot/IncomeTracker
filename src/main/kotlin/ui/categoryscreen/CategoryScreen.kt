@@ -1,5 +1,7 @@
 package ui.categoryscreen
 
+import data.ViewModels.CategoryScreenModel
+import data.ViewModels.CategorySortType
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -17,7 +19,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ui.utils.AddButton
 import ui.utils.ScreenContent
 import ui.utils.Scrollbar
@@ -117,6 +121,7 @@ private fun AddDialog(
 
             val focusRequester = remember { FocusRequester() }
             var name by remember { mutableStateOf("") }
+            var isNameValid by remember { mutableStateOf(true) }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,6 +140,20 @@ private fun AddDialog(
                     value = name,
                     label = { Text("Nazwa") },
                     onValueChange = { name = it },
+                    isError = !isNameValid,
+                    supportingText = {if (!isNameValid) {
+                        Row{
+                            Icon(
+                                painterResource("drawable/icons/error.svg"),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                "Nieprawidłowa nazwa",
+                                fontSize = 16.sp
+                            )
+                        }
+                    } else null},
                     modifier = Modifier
                         .focusable()
                         .focusRequester(focusRequester)
@@ -148,7 +167,15 @@ private fun AddDialog(
                     }
                     Spacer(modifier = Modifier.width(100.dp))
                     Button(
-                        onClick = { onAdd(name) }
+                        onClick = {
+                            when {
+                                Validator.isEmptyString(name) -> isNameValid = true
+                                !Validator.isEmptyString(name) -> isNameValid = false
+                            }
+                            if (isNameValid) {
+                                onAdd(name)
+                            }
+                        }
                     ) {
                         Text("Dodaj")
                     }

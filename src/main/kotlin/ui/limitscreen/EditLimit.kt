@@ -1,5 +1,6 @@
 package ui.limitscreen
 
+import data.ViewModels.CurrentLimit
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
@@ -7,7 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun EditLimit(
@@ -19,6 +22,8 @@ fun EditLimit(
 ) {
 
     var amount by remember { mutableStateOf(item.limitAmount.toString()) }
+    var isAmountValid by remember { mutableStateOf(true) }
+
     Box{
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,6 +52,20 @@ fun EditLimit(
                 value = amount,
                 label = { Text("Kwota") },
                 onValueChange = { amount = it },
+                isError = !isAmountValid,
+                supportingText = {if (!isAmountValid) {
+                    Row{
+                        Icon(
+                            painterResource("drawable/icons/error.svg"),
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            "Nieprawidłowa kwota",
+                            fontSize = 16.sp
+                        )
+                    }
+                } else null},
                 modifier = Modifier
                     .padding(12.dp)
                     .focusable()
@@ -63,8 +82,14 @@ fun EditLimit(
                 Spacer(modifier.width(24.dp))
                 Button(
                     onClick = {
-                        onEditClick(item.categoryName,amount.toDouble(), item.currentDate)
-                        run { onCloseDialog() }
+                        when {
+                            Validator.isValidAmount(amount) -> isAmountValid = true
+                            !Validator.isValidAmount(amount) -> isAmountValid = false
+                        }
+                        if (isAmountValid) {
+                            onEditClick(item.categoryName,amount.toDouble(), item.currentDate)
+                            run { onCloseDialog() }
+                        }
                     },
                 ) {
                     Text("Edytuj")

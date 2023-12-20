@@ -1,5 +1,6 @@
 package ui.limitscreen
 
+import data.ViewModels.LimitScreenModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -94,6 +95,7 @@ fun LimitScreen(
         AddButton(
             text = "Ustal limit",
             expanded = !stateVertical.canScrollBackward || !stateVertical.canScrollForward,
+            onClick = { dialog = !dialog},
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(48.dp)
