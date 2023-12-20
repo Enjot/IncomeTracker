@@ -1,4 +1,4 @@
-package ui.categoryscreen
+package data.ViewModels
 
 import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -82,12 +82,9 @@ class CategoryScreenModel(
             insert("Gry planszowe")
             insert("Remonty")
             insert("Mieszkanie")
-            insert("Części do komputera")
-            insert("Akcje giełdowe")
             insert("Czesne")
             insert("Chemia")
             insert("Remonty")
-            insert("Płyty CD")
             insert("Mieszkanie")
             insert("Zdrowie")
         }

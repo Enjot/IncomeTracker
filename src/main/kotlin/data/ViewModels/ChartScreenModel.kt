@@ -1,4 +1,4 @@
-package ui.chartscreen
+package data.ViewModels
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import data.DatabaseRepository

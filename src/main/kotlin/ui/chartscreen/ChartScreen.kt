@@ -1,6 +1,5 @@
 package ui.chartscreen
 
-import data.ViewModels.ChartScreenModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,12 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aay.compose.barChart.BarChart
 import com.aay.compose.barChart.model.BarParameters
-import com.aay.compose.baseComponents.model.GridOrientation
 import com.aay.compose.baseComponents.model.LegendPosition
-import com.aay.compose.lineChart.LineChart
-import com.aay.compose.lineChart.model.LineParameters
-import com.aay.compose.lineChart.model.LineType
 import data.DateFilter
+import data.ViewModels.ChartScreenModel
 import ui.limitscreen.LimitDatePicker
 import ui.utils.ScreenContent
 import kotlin.random.Random

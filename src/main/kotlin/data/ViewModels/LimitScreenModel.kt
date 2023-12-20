@@ -1,4 +1,4 @@
-package ui.limitscreen
+package data.ViewModels
 
 import CLEAR_DATABASE_AND_LOAD_PREDEFINED_DATA
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -72,7 +72,9 @@ class LimitScreenModel(
             insert(Category("Transport", 1), 200.0, "2023-11")
             insert(Category("Gry komputerowe", 1), 300.0, "2023-09")
             insert(Category("Płyty CD", 1), 250.0, "2023-09")
-            insert(Category("Części do komputera", 1), 7000.0, "2023-12")
+            insert(Category("Subskrybcje", 1), 100.0, "2023-12")
+            insert(Category("Moda", 1), 700.0, "2023-12")
+            insert(Category("Utrzymanie auta", 1), 400.0, "2023-12")
         }
     }
 }
