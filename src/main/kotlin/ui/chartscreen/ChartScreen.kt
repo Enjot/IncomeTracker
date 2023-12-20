@@ -1,7 +1,7 @@
 package ui.chartscreen
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,7 +44,7 @@ fun ChartScreen(
                 Text(
                     text = "Statystyki",
                     style = MaterialTheme.typography.displayLarge,
-                    modifier = Modifier.weight(1f).clickable { }
+                    modifier = Modifier.weight(1f)
                 )
                 Box(
                     modifier = Modifier.padding(vertical = 24.dp, horizontal = 36.dp)
@@ -56,11 +56,11 @@ fun ChartScreen(
                     )
                 }
             }
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
-            ){
-                    BarChartSample(monthStatistic.value, model.filter.value)
+            ) {
+                BarChartSample(monthStatistic.value, model.filter.value)
             }
         }
     }
@@ -90,19 +90,15 @@ fun BarChartSample(
 
 
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        ) {
-        Box(
-
-        ) {
-
-            Column (
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Box {
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-//                    .weight(1f)
-                    .fillMaxSize()
-            ){
+                modifier = Modifier.fillMaxSize()
+            ) {
                 BarChart(
                     chartParameters = barParameters,
                     descriptionStyle = TextStyle(
@@ -111,7 +107,7 @@ fun BarChartSample(
                         fontWeight = FontWeight.Thin
                     ),
                     gridColor = Color.DarkGray,
-                    xAxisData = listOf("${dataFilter.selectedYear}-${dataFilter.selectedMonth}"),
+                    xAxisData = listOf(""),
                     isShowGrid = false,
                     animateChart = true,
                     showGridWithSpacer = true,
@@ -134,33 +130,9 @@ fun BarChartSample(
                 modifier = Modifier
                     .padding(bottom = 16.dp, end = 36.dp)
                     .align(Alignment.CenterEnd)
-//                    .weight(0.2f)
             ) {
                 items(legendItems.toList()) { (category, color) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.height(60.dp)
-                        ) {
-                        Box(modifier = Modifier.height(60.dp)){
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(color = color)
-                                    .size(12.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Box(modifier = Modifier.height(60.dp)){
-                            Text(
-                                text = category,
-//                            modifier = Modifier.padding(start = 10.dp, bottom = 10.dp),
-                                style = MaterialTheme.typography.displaySmall.copy(
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                )
-                            )
-                        }
-                    }
+                    BarCategoryItem(category, color)
                 }
             }
         }
@@ -168,4 +140,34 @@ fun BarChartSample(
     }
 }
 
+@Composable
+fun BarCategoryItem(
+    category: String,
+    color: Color
+) {
+    Row(
+        modifier = Modifier.height(60.dp)
+    ) {
+        Spacer(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(color = color)
+                .size(16.dp)
+                .align(Alignment.CenterVertically)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = category,
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+            )
+        )
+    }
+}
 
+@Preview
+@Composable
+fun BarCategoryItemPreview() {
+    BarCategoryItem("Utrzymanie auta", Color.Green)
+}
