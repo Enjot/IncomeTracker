@@ -1,4 +1,4 @@
-# ExpenseTracker
+# Expense Tracker
 
 26/10/2023
 
