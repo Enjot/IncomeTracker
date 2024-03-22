@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Database file ###
+database.db
+empty_db_asset.db
