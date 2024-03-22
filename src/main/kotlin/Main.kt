@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -28,18 +26,18 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.Navigator
 import data.DatabaseRepoImp
 import data.DatabaseRepository
+import data.ViewModels.CategoryScreenModel
+import data.ViewModels.ChartScreenModel
+import data.ViewModels.LimitScreenModel
+import data.ViewModels.SpendingScreenModel
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import ui.categoryscreen.CategoryScreen
-import data.ViewModels.CategoryScreenModel
 import ui.chartscreen.ChartScreen
-import data.ViewModels.ChartScreenModel
 import ui.limitscreen.LimitScreen
-import data.ViewModels.LimitScreenModel
 import ui.spendingscreen.SpendingScreen
-import data.ViewModels.SpendingScreenModel
 import ui.theme.AppTheme
 import java.awt.Dimension
 
@@ -135,11 +133,11 @@ class HomeScreen : Screen {
                 AnimatedContent(
                     targetState = currentDestination,
                     modifier = Modifier
-                        .shadow(
-                            128.dp,
-                            shape = RoundedCornerShape(topStart = 64.dp, bottomStart = 64.dp)
-                        )
-                        .background(MaterialTheme.colorScheme.surface)
+//                        .shadow(
+//                            128.dp,
+//                            shape = RoundedCornerShape(topStart = 64.dp, bottomStart = 64.dp)
+//                        )
+//                        .background(MaterialTheme.colorScheme.surface)
                 ) { destination ->
                     when (destination) {
                         Destination.SPENDINGS -> {

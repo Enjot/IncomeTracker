@@ -1,10 +1,10 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("jvm") version "1.9.20"
-    id("org.jetbrains.compose") version "1.5.10"
+    kotlin("jvm") version "1.9.23"
+    id("org.jetbrains.compose") version "1.6.1"
     id("app.cash.sqldelight") version "2.0.0"
-    id ("com.google.devtools.ksp") version "1.9.20-1.0.13"
+    id ("com.google.devtools.ksp") version "1.9.23-1.0.19"
 }
 
 group = "com.example"
